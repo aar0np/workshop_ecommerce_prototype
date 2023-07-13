@@ -161,3 +161,23 @@ export const useOrders = () => {
 export const useOrder = (orderId) => {
   return useSWR(`/api/v1/order/${orderId}/`, fetcher);
 };
+
+export const usePromoProduct = (productId) => {
+  const [promoProduct, setPromoProduct] = useState(null);
+  const [promoLoading, setPromoLoading] = useState(true);
+  const [promoError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const promoProd = await fetcher(
+        `/api/v1/products/promoproduct/${productId}`
+      );
+
+      setPromoProduct(promoProd);
+      setPromoLoading(false);
+    };
+    fetchData();
+  }, [productId]);
+
+  return { promoProduct, promoLoading, promoError };
+};

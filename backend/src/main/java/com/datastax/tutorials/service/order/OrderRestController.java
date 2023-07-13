@@ -22,7 +22,9 @@ import org.apache.pulsar.client.api.AuthenticationFactory;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.shade.com.google.gson.Gson;
+//import org.apache.pulsar.shade.com.google.gson.Gson;
+import com.google.gson.Gson;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -85,11 +87,11 @@ public class OrderRestController {
 	// setting default order status to PENDING
 	private static final OrderStatusEnum NEW_ORDER_STATUS = OrderStatusEnum.PENDING;
 	
-	private static final String SERVICE_URL = System.getenv("ASTRA_STREAM_URL");
-	private static final String YOUR_PULSAR_TOKEN = System.getenv("ASTRA_STREAM_TOKEN");
-	private static final String STREAMING_TENANT = System.getenv("ASTRA_STREAM_TENANT");
-	private static final String STREAMING_PREFIX = STREAMING_TENANT + "/default/";
-	private static final String PENDING_ORDER_TOPIC = "persistent://" + STREAMING_PREFIX + "pending-orders";
+//	private static final String SERVICE_URL = System.getenv("ASTRA_STREAM_URL");
+//	private static final String YOUR_PULSAR_TOKEN = System.getenv("ASTRA_STREAM_TOKEN");
+//	private static final String STREAMING_TENANT = System.getenv("ASTRA_STREAM_TENANT");
+//	private static final String STREAMING_PREFIX = STREAMING_TENANT + "/default/";
+//	private static final String PENDING_ORDER_TOPIC = "persistent://" + STREAMING_PREFIX + "pending-orders";
 	
 	public OrderRestController(OrderRepository oRepo,OrderByUserRepository oURepo,
 			OrderStatusHistoryRepository oSHRepo,UserCartsRepository uCRepo,
@@ -102,6 +104,12 @@ public class OrderRestController {
 		cartProductsRepo = cPRepo;
         
 		// Create Pulsar/Astra Streaming client
+		String SERVICE_URL = System.getenv("ASTRA_STREAM_URL");
+		String YOUR_PULSAR_TOKEN = System.getenv("ASTRA_STREAM_TOKEN");
+		String STREAMING_TENANT = System.getenv("ASTRA_STREAM_TENANT");
+		String STREAMING_PREFIX = STREAMING_TENANT + "/default/";
+		String PENDING_ORDER_TOPIC = "persistent://" + STREAMING_PREFIX + "pending-orders";
+
 		try {
 			if (YOUR_PULSAR_TOKEN == null) {
 				// run without auth ... local Pulsar

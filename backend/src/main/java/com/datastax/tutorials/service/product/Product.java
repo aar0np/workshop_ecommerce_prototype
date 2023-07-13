@@ -75,7 +75,7 @@ public class Product {
     public void setProductGroup(String productGroup) {
         this.productGroup = productGroup;
     }
-
+    
     /**
      * Getter accessor for attribute 'name'.
      *

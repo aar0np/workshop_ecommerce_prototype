@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useProduct, useCartId } from "../../hooks";
+import { useProduct, useCartId, usePromoProduct } from "../../hooks";
 import { useParams } from "react-router-dom";
 import { RadioGroup } from "@headlessui/react";
 import { CurrencyDollarIcon, GlobeIcon } from "@heroicons/react/outline";
@@ -59,7 +59,37 @@ const ProductDetail = () => {
         }),
       }
     );
-    toast.success("Added to Cart");
+    
+    let { promoProduct, promoLoading, promoError } = usePromoProduct(
+      selectedProduct.product_id
+    );
+
+    if (promoLoading) return <Loading />;
+    if (!promoProduct || promoError) {
+      // somehow our promo product failed, so just show the cart add success
+      toast.success("Added to Cart");
+    } else {
+      toast((t) => (
+        <span>
+          <b>Added to Cart</b><br/>
+          You might also like
+          <a href={`products/${promoProduct.parentId}/${promoProduct.categoryId}`}>{promoProduct.productName}</a>
+          <br/>
+          <img
+              src={`/images/${promoProduct.images[0]}`}
+              alt={promoProduct.name}
+              className={classNames(
+                "rounded-lg"
+              )}
+            />
+          <br/>
+          <button onClick={() => toast.dismiss(t.id)}>
+            Dismiss
+          </button>
+        </span>
+      ));
+    }
+
   };
 
   return (

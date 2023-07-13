@@ -64,7 +64,7 @@ public class ProductEntity implements Serializable {
     @Column("product_group")
     @CassandraType(type = Name.TEXT)
     private String productGroup;
-    
+
     @Column("short_desc")
     @CassandraType(type = Name.TEXT)
     private String shortDescription;
@@ -110,7 +110,7 @@ public class ProductEntity implements Serializable {
     public void setProductGroup(String productGroup) {
         this.productGroup = productGroup;
     }
-
+    
     /**
      * Getter accessor for attribute 'name'.
      *

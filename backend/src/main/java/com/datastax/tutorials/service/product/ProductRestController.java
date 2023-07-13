@@ -7,6 +7,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+//import com.datastax.tutorials.service.product.ProductVectorDAL.ProductVector;
 
 /**
  * Expose Rest Api to interact with products.
@@ -45,6 +48,10 @@ public class ProductRestController {
     /** Inject the repository. */
     private ProductRepository productRepo;
     
+    // Need separate DAL for vector-related queries
+    // ...for now.
+    private ProductVectorDAL vectorDAL;
+    
     /**
      * Injection through constructor.
      *  
@@ -53,6 +60,7 @@ public class ProductRestController {
      */
     public ProductRestController(ProductRepository repo) {
         this.productRepo = repo;
+        vectorDAL = new ProductVectorDAL();
     }
     
     @GetMapping("/product/{productid}")
@@ -76,6 +84,48 @@ public class ProductRestController {
                 ResponseEntity.notFound().build();
     }
     
+	@GetMapping("/promoproduct/{productid}")
+    @Operation(summary = "Retrieve product vector from its id", 
+    description = "Find product vector by id `SELECT * FROM pet_supply_vectors ORDER BY product_vector ANN OF ? LIMIT 2`", 
+    responses = {
+    		@ApiResponse(responseCode = "200", description = "A product by vector", 
+              content = @Content(mediaType = "application/json", 
+              schema  = @Schema(implementation = Product.class, name = "Promotion Product"))),
+    		@ApiResponse(responseCode = "404", description = "Product not found"),
+    		@ApiResponse(responseCode = "400", description = "Invalid parameter check productId format."),
+    		@ApiResponse(responseCode = "500", description = "Technical Internal error.")}
+    )
+	public ResponseEntity<ProductVector> getPromotionProduct(HttpServletRequest req,
+            @PathVariable(value = "productid") 
+            String productid) {
+
+		// get original product's vector
+		Optional<ProductVector> originalProduct = vectorDAL.getProductVectorById(productid);
+				
+		if (!originalProduct.isEmpty()) {
+			// product exists, now query by its vector to get the closest product match
+			
+			List<ProductVector> ann = vectorDAL.getProductsByANN(originalProduct.get());
+			
+			if (ann.size() > 1) {
+
+				for (ProductVector product : ann) {
+					String prodGroup = product.getProductGroup();
+					// The closest matches for clothing will likely just have different sizes.
+					// So, we will iterate through the list until we find the first product with a
+					// different product group.
+					
+					if (!prodGroup.equals(originalProduct.get().getProductGroup())) {
+
+						return ResponseEntity.ok(product);
+					}
+				}
+			}			
+		}
+		
+		return ResponseEntity.notFound().build();
+	}
+	
     /**
      * Mapping Entity => REST.
      *
@@ -98,6 +148,4 @@ public class ProductRestController {
         pr.setProductGroup(p.getProductGroup());
          return pr;
     }
-   
-
 }
