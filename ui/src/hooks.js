@@ -66,6 +66,7 @@ export const useCategory = (parentId, categoryId) => {
 
 export const useProduct = (parentId, categoryId) => {
   const [product, setProduct] = useState(null);
+  const [promoProduct, setPromoProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error] = useState(null);
 
@@ -85,6 +86,11 @@ export const useProduct = (parentId, categoryId) => {
             fetcher(`/api/v1/prices/price/${productId}`)
           )
         );
+        const firstProductId = products[0].product_id;
+        const promoProd = await fetcher(
+          `/api/v1/products/promoproduct/${firstProductId}`
+        );
+        setPromoProduct(promoProd);
         category.products = products.map((product) => {
           product.price = _.find(prices, { product_id: product.product_id });
           return product;
@@ -96,7 +102,7 @@ export const useProduct = (parentId, categoryId) => {
     fetchData();
   }, [categoryId, parentId]);
 
-  return { product, loading, error };
+  return { product, promoProduct, loading, error };
 };
 
 export const useCart = (cartId) => {
@@ -160,24 +166,4 @@ export const useOrders = () => {
 
 export const useOrder = (orderId) => {
   return useSWR(`/api/v1/order/${orderId}/`, fetcher);
-};
-
-export const usePromoProduct = (productId) => {
-  const [promoProduct, setPromoProduct] = useState(null);
-  const [promoLoading, setPromoLoading] = useState(true);
-  const [promoError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const promoProd = await fetcher(
-        `/api/v1/products/promoproduct/${productId}`
-      );
-
-      setPromoProduct(promoProd);
-      setPromoLoading(false);
-    };
-    fetchData();
-  }, [productId]);
-
-  return { promoProduct, promoLoading, promoError };
 };

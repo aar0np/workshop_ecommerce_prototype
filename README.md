@@ -302,6 +302,18 @@ CREATE TABLE IF NOT EXISTS order_status_history (
     order_status text,
     PRIMARY KEY (order_id, status_timestamp)
 ) WITH CLUSTERING ORDER BY (status_timestamp DESC);
+
+/* Session 5 - Vector Search data */
+CREATE TABLE product_vectors (
+    product_id TEXT PRIMARY KEY,
+    name TEXT,
+    product_group TEXT,
+    parent_id UUID,
+    category_id UUID,
+    images SET<TEXT>,
+    product_vector vector<float,32>);
+
+CREATE CUSTOM INDEX ON product_vectors(product_vector) USING 'StorageAttachedIndex';
 ```
 
 [🏠 Back to Table of Contents](#-table-of-contents)
@@ -478,6 +490,81 @@ select * from CATEGORY;
  - `/category/91455473-212e-4c6e-8bec-1da06779ae10`  =>  Category[Men's "Your Face...Autowired" T-Shirt, Men's "Go Away...Annotation" T-Shirt]
  - The featured products table is a simple way for web marketers to promote small numbers of products, and have them appear in an organized fashion on the main page.  The `feature_id` key is simply an integer, with the default being `202112` (for December, 2021).  You can (of course) use other numeric naming schemes.
 
+#### Session 5 - Vector Search data ####
+
+```
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC302XL','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,0], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC303XL','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC30L','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC30M','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC30S','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('APC30XL','Apache Cassandra 3.0 Contributor T-Shirt','APC30',{'apc30.jpg'},[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,1,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 95ae4613-0184-46ee-b4b0-adfe882754a8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA11212XL','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA11213XL','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA1121L','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA1121M','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA1121S','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSA1121XL','DataStax Astra "One Team" Long Sleeve Tee','DSA1121',{'dsa1121.jpg'},[1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 775be203-1a84-4822-9645-4da98ca2b2d8);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH916XL','DataStax Black Hoodie','DSH916',{'dsh916.jpg'},[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, b9bed3c0-0a76-44ea-bce6-f5f21611a3f1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSS821L','DataStax Gray Track Jacket','DSS821',{'dss821.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0], d887b049-d16c-46e1-8c94-0a1280dedc30, f629e107-b219-4563-a852-6909fd246949);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSS821M','DataStax Gray Track Jacket','DSS821',{'dss821.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0], d887b049-d16c-46e1-8c94-0a1280dedc30, f629e107-b219-4563-a852-6909fd246949);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSS821S','DataStax Gray Track Jacket','DSS821',{'dss821.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0], d887b049-d16c-46e1-8c94-0a1280dedc30, f629e107-b219-4563-a852-6909fd246949);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSS821XL','DataStax Gray Track Jacket','DSS821',{'dss821.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0], d887b049-d16c-46e1-8c94-0a1280dedc30, f629e107-b219-4563-a852-6909fd246949);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH915L','DataStax Vintage 2015 MVP Hoodie','DSH915',{'dsh915.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, 86d234a4-6b97-476c-ada8-efb344d39743);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH915M','DataStax Vintage 2015 MVP Hoodie','DSH915',{'dsh915.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,0,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, 86d234a4-6b97-476c-ada8-efb344d39743);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH915S','DataStax Vintage 2015 MVP Hoodie','DSH915',{'dsh915.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,0,0,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, 86d234a4-6b97-476c-ada8-efb344d39743);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH915XL','DataStax Vintage 2015 MVP Hoodie','DSH915',{'dsh915.jpg'},[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,1,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, 86d234a4-6b97-476c-ada8-efb344d39743);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH916L','DataStax Black Hoodie','DSH916',{'dsh916.jpg'},[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, b9bed3c0-0a76-44ea-bce6-f5f21611a3f1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH916M','DataStax Black Hoodie','DSH916',{'dsh916.jpg'},[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, b9bed3c0-0a76-44ea-bce6-f5f21611a3f1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('DSH916S','DataStax Black Hoodie','DSH916',{'dsh916.jpg'},[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0], 6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1, b9bed3c0-0a76-44ea-bce6-f5f21611a3f1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS5342XL','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS5343XL','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS534L','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS534M','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS534S','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LS534XL','Go Away Annotation T-Shirt','LS534',{'ls534.png'},[0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 99c4d825-d262-4a95-a04e-cc72e7e273c1);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LN3552XL','Your Face is an @Autowired @Bean T-Shirt','LN355',{'ln355.png'},[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0], 91455473-212e-4c6e-8bec-1da06779ae10, 3fa13eee-d057-48d0-b0ae-2d83af9e3e3e);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LN355L','Your Face is an @Autowired @Bean T-Shirt','LN355',{'ln355.png'},[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 3fa13eee-d057-48d0-b0ae-2d83af9e3e3e);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LN355M','Your Face is an @Autowired @Bean T-Shirt','LN355',{'ln355.png'},[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 3fa13eee-d057-48d0-b0ae-2d83af9e3e3e);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LN355S','Your Face is an @Autowired @Bean T-Shirt','LN355',{'ln355.png'},[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 3fa13eee-d057-48d0-b0ae-2d83af9e3e3e);
+INSERT INTO product_vectors (product_id, name, product_group, images, product_vector, parent_id, category_id)
+VALUES('LN355XL','Your Face is an @Autowired @Bean T-Shirt','LN355',{'ln355.png'},[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0], 91455473-212e-4c6e-8bec-1da06779ae10, 3fa13eee-d057-48d0-b0ae-2d83af9e3e3e);
+```
+
 [🏠 Back to Table of Contents](#-table-of-contents)
 
 ## 5. Create your tokens
@@ -542,7 +629,7 @@ export ASTRA_STREAM_TOKEN="eyJhMBhGYBlahBlahBlahNotARealToken37hOAv9t1fHIhJLAHw"
 
 ## 6. Setup your application
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-ecommerce-app)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/aar0np/ecom_vector_prototype)
 
 ### Know your Gitpod
 

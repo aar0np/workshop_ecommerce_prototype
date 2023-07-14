@@ -25,7 +25,7 @@ const policies = [
 const ProductDetail = () => {
   const params = useParams();
   const [selectedProduct, setSelectedProduct] = useState(null);
-  let { product, loading, error } = useProduct(
+  let { product, promoProduct, loading, error } = useProduct(
     params.parentId,
     params.categoryId
   );
@@ -60,20 +60,12 @@ const ProductDetail = () => {
       }
     );
     
-    let { promoProduct, promoLoading, promoError } = usePromoProduct(
-      selectedProduct.product_id
-    );
-
-    if (promoLoading) return <Loading />;
-    if (!promoProduct || promoError) {
-      // somehow our promo product failed, so just show the cart add success
-      toast.success("Added to Cart");
-    } else {
+   if (promoProduct) {
       toast((t) => (
         <span>
           <b>Added to Cart</b><br/>
-          You might also like
-          <a href={`products/${promoProduct.parentId}/${promoProduct.categoryId}`}>{promoProduct.productName}</a>
+          You might also like:<br/>
+          <a href={`/products/${promoProduct.parentId}/${promoProduct.categoryId}`}>{promoProduct.productName}</a>
           <br/>
           <img
               src={`/images/${promoProduct.images[0]}`}
@@ -88,10 +80,11 @@ const ProductDetail = () => {
           </button>
         </span>
       ));
+    } else {
+      toast.success("Added to Cart");
     }
-
   };
-
+  
   return (
     <main className="mt-8 max-w-2xl mx-auto pb-16 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
       <div className="lg:grid lg:grid-cols-12 lg:auto-rows-min lg:gap-x-8">
