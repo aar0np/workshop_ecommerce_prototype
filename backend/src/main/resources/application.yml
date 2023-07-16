@@ -21,9 +21,9 @@ spring:
 
 astra:
   api:
-    application-token: AstraCS:IZBFeNuvYYwqmYoUsyttQZzW:75f32ae78f9e2b196ef24219c272b3d86e59c13ceaf1244701369fcabee6b1b6
-    database-id: cab00884-ea42-4e4e-a426-e4199fb25536
-    database-region: us-east1
+    application-token: ${ASTRA_DB_APP_TOKEN}
+    database-id: ${ASTRA_DB_ID}
+    database-region: ${ASTRA_DB_REGION}
     cross-region-failback: false
   cql:
     enabled: true
