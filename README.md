@@ -629,7 +629,7 @@ export ASTRA_STREAM_TOKEN="eyJhMBhGYBlahBlahBlahNotARealToken37hOAv9t1fHIhJLAHw"
 
 ## 6. Setup your application
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/aar0np/ecom_vector_prototype)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/aar0np/workshop_ecommerce_prototype)
 
 ### Know your Gitpod
 
