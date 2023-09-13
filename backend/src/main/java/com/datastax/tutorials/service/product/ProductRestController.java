@@ -86,7 +86,7 @@ public class ProductRestController {
     
 	@GetMapping("/promoproduct/{productid}")
     @Operation(summary = "Retrieve product vector from its id", 
-    description = "Find product vector by id `SELECT * FROM pet_supply_vectors ORDER BY product_vector ANN OF ? LIMIT 2`", 
+    description = "Find product vector by id `SELECT * FROM pet_supply_vectors ORDER BY product_vector ANN OF ? LIMIT 8`", 
     responses = {
     		@ApiResponse(responseCode = "200", description = "A product by vector", 
               content = @Content(mediaType = "application/json", 
