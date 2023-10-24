@@ -16,9 +16,8 @@ public class ProductVectorDAL {
 	private AstraClient conn;
     private CqlSession session;
 
-//    protected record ProductVector(String productId, String productName,
-//    		String productGroup, Set<String> images, Object productVector) {
-//    }
+    private PreparedStatement qpPrepared;
+    private PreparedStatement qvPrepared;
     
     public ProductVectorDAL() {
     	String token = System.getenv("ASTRA_DB_APP_TOKEN");
@@ -33,15 +32,22 @@ public class ProductVectorDAL {
                 .build();
         
         session = conn.cqlSession();
+        
+        // prepare statements
+        qpPrepared = session.prepare(
+    			"SELECT product_id, name, product_group, images, "
+    			+ " product_vector, parent_id, category_id "
+    			+ " FROM product_vectors WHERE product_id = ?");
+        
+        qvPrepared = session.prepare(
+    			"SELECT product_id, name, product_group, images, "
+    			+ "product_vector, parent_id, category_id " 
+    			+ "FROM product_vectors ORDER BY product_vector ANN OF ? LIMIT 8;");
     }
     
     public Optional<ProductVector> getProductVectorById(String productId) {
 
 		// get original product detail
-		PreparedStatement qpPrepared = session.prepare(
-				"SELECT product_id, name, product_group, images, "
-				+ " product_vector, parent_id, category_id "
-				+ " FROM product_vectors WHERE product_id = ?");
 		BoundStatement qpBound = qpPrepared.bind(productId);
 		ResultSet rs = session.execute(qpBound);
 		Row product = rs.one();
@@ -61,10 +67,6 @@ public class ProductVectorDAL {
 
 		List<ProductVector> returnVal = new ArrayList<>();
 
-		PreparedStatement qvPrepared = session.prepare(
-				"SELECT product_id, name, product_group, images, "
-				+ "product_vector, parent_id, category_id " 
-				+ "FROM product_vectors ORDER BY product_vector ANN OF ? LIMIT 8;");
 		BoundStatement qvBound = qvPrepared.bind(originalProduct.getProductVector());
 		ResultSet rsV = session.execute(qvBound);
 		List<Row> ann = rsV.all();
