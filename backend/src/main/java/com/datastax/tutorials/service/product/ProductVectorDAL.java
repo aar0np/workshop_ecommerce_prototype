@@ -11,6 +11,11 @@ import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 
+// DEPRECATED!!!
+//
+// Nothing should instantiate this class anymore, but I still want it in the project as an example.
+//
+@Deprecated
 public class ProductVectorDAL {
 
 	private AstraClient conn;

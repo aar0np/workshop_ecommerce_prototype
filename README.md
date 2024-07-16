@@ -346,8 +346,13 @@ INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('Bighea
 INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax Gray Track Jacket',f629e107-b219-4563-a852-6909fd246949,'dss821.jpg',d887b049-d16c-46e1-8c94-0a1280dedc30,['DSS821S','DSS821M','DSS821L','DSS821XL']);
 INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax Vintage 2015 MVP Hoodie',86d234a4-6b97-476c-ada8-efb344d39743,'dsh915.jpg',6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1,['DSH915S','DSH915M','DSH915L','DSH915XL']);
 INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax Black Hoodie',b9bed3c0-0a76-44ea-bce6-f5f21611a3f1,'dsh916.jpg',6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1,['DSH916S','DSH916M','DSH916L','DSH916XL']);
-INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('Apache Cassandra 3.0 Contributor T-Shirt',95ae4613-0184-46ee-b4b0-adfe882754a8,'apc30a.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['APC30S','APC30M','APC30L','APC30XL','APC302XL','APC303XL']);
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('Apache Cassandra® 3.0 Contributor T-Shirt',95ae4613-0184-46ee-b4b0-adfe882754a8,'apc30a.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['APC30S','APC30M','APC30L','APC30XL','APC302XL','APC303XL']);
 INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax Astra "One Team" Long Sleeve Tee',775be203-1a84-4822-9645-4da98ca2b2d8,'dsa1121.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['DSA1121S','DSA1121M','DSA1121L','DSA1121XL','DSA11212XL','DSA11213XL']);
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('Apache Cassandra® Vector Search T-Shirt',7eedd850-4443-4c3f-b7b4-931b8f5ee825,'apcvs.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['APCVSS','APCVSM','APCVSL','APCVSXL','APCVS2XL','APCVS3XL'])
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax x Langflow T-Shirt',0c9cd0b6-dcae-4772-8903-381a1730ab14,'dslf1.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['DSLF1S','DSLF1M','DSLF1L','DSLF1XL','DSLF12XL','DSLF13XL'])
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax 2024 purple T-Shirt',4c180b52-1cb6-45c2-a32b-ea8e900b4288,'dsp24.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['DSP24S','DSP24M','DSP24L','DSP24XL','DSP242XL','DSP243XL'])
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('Apache Cassandra® 2023 T-Shirt',f9cc25fe-a883-4777-b564-ed2a150636a8,'apc23.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['APC23S','APC23M','APC23L','APC23XL','APC232XL','APC233XL'])
+INSERT INTO category (name,category_id,image,parent_id,products) VALUES ('DataStax 2024 black T-Shirt',35bb51f9-da02-4fb3-8c44-012d89208381,'dsb24.jpg',91455473-212e-4c6e-8bec-1da06779ae10,['DSB24S','DSB24M','DSB24L','DSB24XL','DSB242XL','DSB243XL'])
 
 INSERT INTO price(product_id,store_id,value) VALUES ('LS534S','web',14.99);
 INSERT INTO price(product_id,store_id,value) VALUES ('LS534M','web',14.99);
@@ -385,6 +390,36 @@ INSERT INTO price(product_id,store_id,value) VALUES ('APC30L','web',15.99);
 INSERT INTO price(product_id,store_id,value) VALUES ('APC30XL','web',15.99);
 INSERT INTO price(product_id,store_id,value) VALUES ('APC302XL','web',17.99);
 INSERT INTO price(product_id,store_id,value) VALUES ('APC303XL','web',17.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVSS','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVSM','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVSL','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVSXL','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVS2XL','web',17.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APCVS3XL','web',17.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC23S','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC23M','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC23L','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC23XL','web',15.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC232XL','web',17.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('APC233XL','web',17.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF1S','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF1M','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF1L','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF1XL','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF12XL','web',18.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSLF13XL','web',18.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP24S','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP24M','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP24L','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP24XL','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP242XL','web',18.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSP243XL','web',18.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB24S','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB24M','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB24L','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB24XL','web',16.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB242XL','web',18.99);
+INSERT INTO price(product_id,store_id,value) VALUES ('DSB243XL','web',18.99);
 
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
 VALUES ('LS534S','LS534','Go Away Annotation T-Shirt','NerdShirts','NS101','Men''s Small "Go Away...Annotation" T-Shirt','Having to answer support questions when you really want to get back to coding?  Wear this to work, and let there be no question as to what you''d rather be doing.',{'size':'Small','material':'cotton, polyester','cut':'men''s','color':'black'},{'ls534.png'});
@@ -423,22 +458,22 @@ VALUES ('DSA11212XL','DSA1121','DataStax Astra "One Team" Long Sleeve Tee','Data
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
 VALUES ('DSA11213XL','DSA1121','DataStax Astra "One Team" Long Sleeve Tee','DataStax','DSA1121','DataStax Astra "One Team" Long Sleeve Tee - 3X Large','Given out at the internal summit, show how proud you are to talk about the world''s best multi-region, multi-cloud, serverless database!',{'size':'3X Large','material':'cotton, polyester','color':'black'},{'dsa1121.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC30S','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Small','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC30S','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Small','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'Small','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC30M','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Medium','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC30M','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Medium','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'Medium','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC30L','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC30L','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'Large','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC30XL','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Extra Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC30XL','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - Extra Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'Extra Large','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC302XL','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - 2X Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC302XL','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - 2X Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'2X Large','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
-VALUES ('APC303XL','APC30','Apache Cassandra 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - 3X Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
+VALUES ('APC303XL','APC30','Apache Cassandra® 3.0 Contributor T-Shirt','Apache Foundation','APC30','Apache Cassandra 3.0 Contributor T-Shirt - 3X Large','Own a piece of Cassandra history with this Apache Cassandra 3.0 "Contributor" shirt.  Given out to all of the contributors to the project in 2016, shows the unmistakable Cassandra Eye on the front, with the
 engine rebuild" on the back.',{'size':'3X Large','material':'cotton, polyester','color':'black'},{'apc30.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
 VALUES ('DSS821S','DSS821','DataStax Gray Track Jacket','DataStax','DSS821','DataStax Gray Track Jacket - Small','This lightweight polyester jacket will be your favorite while hiking the trails or teeing off.',{'size':'Small','material':'polyester','color':'gray'},{'dss821.jpg'});
@@ -464,10 +499,70 @@ INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,
 VALUES ('DSH916L','DSH916','DataStax Black Hoodie','DataStax','DSS916','DataStax Black Hoodie - Large','Super warm!  You will underestimate how many times you will fall asleep wearing this!',{'size':'Large','color':'black'},{'dsh916.jpg'});
 INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
 VALUES ('DSH916XL','DSH916','DataStax Black Hoodie','DataStax','DSS916','DataStax Black Hoodie - Extra Large','Super warm!  You will underestimate how many times you will fall asleep wearing this!',{'size':'Extra Large','color':'black'},{'dsh916.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVSS','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - Small','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'Small','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVSM','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - Medium','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'Medium','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVSL','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - Large','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'Large','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVSXL','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - Large','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'Extra Large','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVS2XL','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - 2X Large','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'2X Large','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APCVS3XL','APCVS','Apache Cassandra® Vector Search T-Shirt','Apache Foundation','APCVS','Apache Cassandra® Vector Search T-Shirt - 3X Large','Show the tech world that you''re working on the cutting-edge of Gen AI by wearing this Apache Cassandra® Vector Search T-Shirt!',{'size':'3X Large','material':'cotton, polyester','color':'black'},{'apcvs.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC23S','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - Small','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'Small','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC23M','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - Medium','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'Medium','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC23L','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - Large','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'Large','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC23XL','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - Large','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'Extra Large','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC232XL','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - 2X Large','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'2X Large','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('APC233XL','APC23','Apache Cassandra® 2023 T-Shirt','Apache Foundation','APC23','Apache Cassandra® 2023 T-Shirt - 3X Large','From the 2023 Apache Cassandra® Summit! While True, ScaleWithCassandra()!',{'size':'3X Large','material':'cotton, polyester','color':'black'},{'apc23.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF1S','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - Small','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'Small','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF1M','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - Medium','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'Medium','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF1L','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - Large','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'Large','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF1XL','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - Extra Large','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'Extra Large','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF12XL','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - 2X Large','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'2X Large','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSLF13XL','DSLF1','DataStax x Langflow T-Shirt','DataStax','DSLF1','DataStax x Langflow T-Shirt - 3X Large','The only thing better than a GUI for building Gen AI projects, might be this shirt.',{'size':'3X Large','material':'polyester','color':'indigo'},{'dslf1.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP24S','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - Small','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Small','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP24M','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - Medium','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Medium','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP24L','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Large','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP24XL','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - Extra Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Extra Large','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP242XL','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - 2X Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'2X Large','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSP243XL','DSP24','DataStax 2024 purple T-Shirt','DataStax','DSP24','DataStax 2024 purple T-Shirt - 3X Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'3X Large','material':'polyester','color':'purple'},{'dsp24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB24S','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - Small','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Small','material':'polyester','color':'black'},{'dsb24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB24M','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - Medium','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Medium','material':'polyester','color':'black'},{'dsb24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB24L','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Large','material':'polyester','color':'black'},{'dsb24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB24XL','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - Extra Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'Extra Large','material':'polyester','color':'black'},{'dsb24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB242XL','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - 2X Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'2X Large','material':'polyester','color':'black'},{'dsb24.jpg'});
+INSERT INTO product(product_id,product_group,name,brand,model_number,short_desc,long_desc,specifications,images)
+VALUES ('DSB243XL','DSB24','DataStax 2024 black T-Shirt','DataStax','DSB24','DataStax 2024 black T-Shirt - 3X Large','Show your company pride with this purple DataStax shirt! This is the "in-the-booth" edition.',{'size':'3X Large','material':'polyester','color':'black'},{'dsb24.jpg'});
 
 INSERT INTO featured_product_groups (feature_id,name,category_id,image,price,parent_id) VALUES (202112,'DataStax Gray Track Jacket',f629e107-b219-4563-a852-6909fd246949,'dss821.jpg',44.99,d887b049-d16c-46e1-8c94-0a1280dedc30);
 INSERT INTO featured_product_groups (feature_id,name,category_id,image,price,parent_id) VALUES (202112,'DataStax Black Hoodie',b9bed3c0-0a76-44ea-bce6-f5f21611a3f1,'dsh916.jpg',35.99,6a4d86aa-ceb5-4c6f-b9b9-80e9a8c58ad1);
-INSERT INTO featured_product_groups (feature_id,name,category_id,image,price,parent_id) VALUES (202112,'Apache Cassandra 3.0 Contributor T-Shirt',95ae4613-0184-46ee-b4b0-adfe882754a8,'apc30a.jpg',15.99,91455473-212e-4c6e-8bec-1da06779ae10);
+INSERT INTO featured_product_groups (feature_id,name,category_id,image,price,parent_id) VALUES (202112,'Apache Cassandra® 3.0 Contributor T-Shirt',95ae4613-0184-46ee-b4b0-adfe882754a8,'apc30a.jpg',15.99,91455473-212e-4c6e-8bec-1da06779ae10);
 INSERT INTO featured_product_groups (feature_id,name,category_id,image,price,parent_id) VALUES (202112,'DataStax Astra "One Team" Long Sleeve Tee',775be203-1a84-4822-9645-4da98ca2b2d8,'dsa1121.jpg',21.99,91455473-212e-4c6e-8bec-1da06779ae10);
 
 ```

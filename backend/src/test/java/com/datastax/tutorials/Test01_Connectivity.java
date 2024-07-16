@@ -21,16 +21,16 @@ public class Test01_Connectivity {
     void should_display_astraClient() {
         System.out.println("List Databases available in your Organization (AstraClient)");
         // astra-spring-boot-starter 0.4-
-        System.out.println("+ Your OrganizationID: " + astraClient.apiDevopsOrganizations().organizationId());
+        // System.out.println("+ Your OrganizationID: " + astraClient.apiDevopsOrganizations().organizationId());
         // new version 0.5+
-        // System.out.println("+ Your OrganizationID: " + astraClient.apiDevops().getOrganizationId());
+         System.out.println("+ Your OrganizationID: " + astraClient.apiDevops().getOrganizationId());
         System.out.println("+ Your Databases: ");
         astraClient.apiDevopsDatabases()
         // astra-spring-boot-starter 0.4-
-        		.databasesNonTerminated()
+        //		.databasesNonTerminated()
         // new version 0.5+
-        //      .findAllNonTerminated()
-                .forEach(this::displayDB);
+        	.findAllNonTerminated()
+              	.forEach(this::displayDB);
     }
     
     @Test

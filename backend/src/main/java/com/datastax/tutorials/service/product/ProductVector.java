@@ -13,6 +13,9 @@ public class ProductVector {
 	private UUID parentId;
 	private UUID categoryId;
 	
+	public ProductVector() {
+	}
+	
 	public ProductVector(String productId, String productName,
     		String productGroup, Set<String> images, Object productVector, UUID parentId, UUID categoryId) {
 		

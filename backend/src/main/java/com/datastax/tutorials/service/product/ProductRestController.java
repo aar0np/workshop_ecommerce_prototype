@@ -7,6 +7,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,10 +48,11 @@ public class ProductRestController {
 
     /** Inject the repository. */
     private ProductRepository productRepo;
+    private ProductVectorRepository productVectorRepo;
     
     // Need separate DAL for vector-related queries
     // ...for now.
-    private ProductVectorDAL vectorDAL;
+    //private ProductVectorDAL vectorDAL;
     
     /**
      * Injection through constructor.
@@ -58,9 +60,10 @@ public class ProductRestController {
      * @param repo
      *      repository
      */
-    public ProductRestController(ProductRepository repo) {
+    public ProductRestController(ProductRepository repo, ProductVectorRepository vRepo) {
         this.productRepo = repo;
-        vectorDAL = new ProductVectorDAL();
+        this.productVectorRepo = vRepo;
+        //vectorDAL = new ProductVectorDAL();
     }
     
     @GetMapping("/product/{productid}")
@@ -100,12 +103,21 @@ public class ProductRestController {
             String productid) {
 
 		// get original product's vector
-		Optional<ProductVector> originalProduct = vectorDAL.getProductVectorById(productid);
-				
+		//Optional<ProductVector> originalProduct = vectorDAL.getProductVectorById(productid);
+		Optional<ProductVectorEntity> originalProduct = productVectorRepo.findById(productid);
+		
 		if (!originalProduct.isEmpty()) {
 			// product exists, now query by its vector to get the closest product match
 			
-			List<ProductVector> ann = vectorDAL.getProductsByANN(originalProduct.get());
+			//List<ProductVector> ann = vectorDAL.getProductsByANN(originalProduct.get());
+			List<ProductVectorEntity> entityList = productVectorRepo.findProductsByVector(
+					originalProduct.get().getProductVector());
+			
+			// convert entity results to List of POJO
+			List<ProductVector> ann = new ArrayList<ProductVector>();
+			for (ProductVectorEntity pve : entityList) {
+				ann.add(mapProductVector(pve));
+			}
 			
 			if (ann.size() > 1) {
 
@@ -147,5 +159,18 @@ public class ProductRestController {
         pr.setName(p.getName());
         pr.setProductGroup(p.getProductGroup());
          return pr;
+    }
+    
+    private ProductVector mapProductVector(ProductVectorEntity p) {
+    	ProductVector pv = new ProductVector();
+    	pv.setProductId(p.getProductId());
+    	pv.setCategoryId(p.getCategoryId());
+    	pv.setImages(p.getImages());
+    	pv.setParentId(p.getParentId());
+    	pv.setProductGroup(p.getProductGroup());
+    	pv.setProductName(p.getProductName());
+    	pv.setProductVector(p.getProductVector());
+    	
+    	return pv;
     }
 }
