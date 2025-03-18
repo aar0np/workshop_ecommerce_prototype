@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-//import com.datastax.tutorials.service.product.ProductVectorDAL.ProductVector;
+import com.datastax.tutorials.service.product.ProductVectorRepository;
 
 /**
  * Expose Rest Api to interact with products.
@@ -50,6 +50,9 @@ public class ProductRestController {
     private ProductRepository productRepo;
     private ProductVectorRepository productVectorRepo;
     
+    // Table API DAL
+    private ProductTableAPIDAL productTableAPIDAL;
+    
     // Need separate DAL for vector-related queries
     // ...for now.
     //private ProductVectorDAL vectorDAL;
@@ -63,7 +66,8 @@ public class ProductRestController {
     public ProductRestController(ProductRepository repo, ProductVectorRepository vRepo) {
         this.productRepo = repo;
         this.productVectorRepo = vRepo;
-        //vectorDAL = new ProductVectorDAL();
+
+        this.productTableAPIDAL = new ProductTableAPIDAL();
     }
     
     @GetMapping("/product/{productid}")
@@ -81,9 +85,12 @@ public class ProductRestController {
             @PathVariable(value = "productid") 
             @Parameter(name = "productid", description = "Product identifier", example = "LS5342XL") 
             String productid) {
-        Optional<ProductEntity> pe = productRepo.findById(productid);
-        return pe.isPresent() ? 
-                ResponseEntity.ok(mapProduct(pe.get())) : 
+
+    	//Optional<ProductEntity> pe = productRepo.findById(productid);
+    	Optional<ProductTableEntity> pe = productTableAPIDAL.getProductById(productid);
+        
+    	return pe.isPresent() ? 
+                ResponseEntity.ok(mapProductTableEntity(pe.get())) : 
                 ResponseEntity.notFound().build();
     }
     
@@ -159,6 +166,21 @@ public class ProductRestController {
         pr.setName(p.getName());
         pr.setProductGroup(p.getProductGroup());
          return pr;
+    }
+
+    private Product mapProductTableEntity(ProductTableEntity p) {
+        Product pr = new Product();
+        pr.setProductId(p.getProductId());
+        pr.setBrand(p.getBrand());
+        pr.setImages(p.getImages());
+        pr.setLinkedDocuments(p.getLinkedDocuments());
+        pr.setLongDesc(p.getLongDescription());
+        pr.setShortDesc(p.getShortDescription());
+        pr.setSpecifications(p.getSpecifications());
+        pr.setModelNumber(p.getModelNumber());
+        pr.setName(p.getName());
+        pr.setProductGroup(p.getProductGroup());
+        return pr;
     }
     
     private ProductVector mapProductVector(ProductVectorEntity p) {

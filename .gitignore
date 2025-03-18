@@ -21,6 +21,7 @@ target
 build
 tmp
 dist
+frontend/
 
 # misc
 .DS_Store
