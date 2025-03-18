@@ -27,8 +27,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.datastax.tutorials.service.product.ProductVectorRepository;
-
 /**
  * Expose Rest Api to interact with products.
  *
@@ -47,7 +45,7 @@ import com.datastax.tutorials.service.product.ProductVectorRepository;
 public class ProductRestController {
 
     /** Inject the repository. */
-    private ProductRepository productRepo;
+	// private ProductRepository productRepo;
     private ProductVectorRepository productVectorRepo;
     
     // Table API DAL
@@ -64,9 +62,9 @@ public class ProductRestController {
      *      repository
      */
     public ProductRestController(ProductRepository repo, ProductVectorRepository vRepo) {
-        this.productRepo = repo;
+        //this.productRepo = repo;
         this.productVectorRepo = vRepo;
-
+        
         this.productTableAPIDAL = new ProductTableAPIDAL();
     }
     
@@ -152,7 +150,7 @@ public class ProductRestController {
      *      entity
      * @return
      *      rest bean
-     */
+     *
     private Product mapProduct(ProductEntity p) {
         Product pr = new Product();
         pr.setProductId(p.getProductId());
@@ -167,6 +165,7 @@ public class ProductRestController {
         pr.setProductGroup(p.getProductGroup());
          return pr;
     }
+     */
 
     private Product mapProductTableEntity(ProductTableEntity p) {
         Product pr = new Product();

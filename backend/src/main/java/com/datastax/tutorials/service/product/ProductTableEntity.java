@@ -7,8 +7,6 @@ import com.datastax.astra.client.tables.mapping.Column;
 import com.datastax.astra.client.tables.mapping.EntityTable;
 import com.datastax.astra.client.tables.mapping.PartitionBy;
 
-//import lombok.Data;
-
 
 @EntityTable("product")
 public class ProductTableEntity {
@@ -123,6 +121,4 @@ public class ProductTableEntity {
 	public void setSpecifications(Map<String, String> specifications) {
 		this.specifications = specifications;
 	}
-
-
 }
