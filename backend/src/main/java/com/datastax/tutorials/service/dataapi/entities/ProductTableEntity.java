@@ -1,46 +1,80 @@
-package com.datastax.tutorials.service.product;
+package com.datastax.tutorials.service.dataapi.entities;
 
 import java.util.Map;
 import java.util.Set;
 
+import com.datastax.astra.client.tables.definition.columns.ColumnTypes;
 import com.datastax.astra.client.tables.mapping.Column;
 import com.datastax.astra.client.tables.mapping.EntityTable;
 import com.datastax.astra.client.tables.mapping.PartitionBy;
+import com.datastax.tutorials.service.product.Product;
 
 
 @EntityTable("product")
 public class ProductTableEntity {
 
 	@PartitionBy(0)
-	@Column(name="product_id")
+	@Column(name="product_id", type = ColumnTypes.UUID)
     private String productId;
     
-    @Column(name="brand")
+    @Column(name="brand", type = ColumnTypes.TEXT)
     private String brand;
     
-    @Column(name="images")
+    @Column(name="images", type = ColumnTypes.SET, valueType = ColumnTypes.TEXT)
     private Set<String> images;
     
-    @Column(name="linked_documents")
+    @Column(name="linked_documents", type = ColumnTypes.MAP, valueType = ColumnTypes.TEXT, keyType = ColumnTypes.TEXT)
     private Map<String, String> linkedDocuments;
     
-    @Column(name="long_desc")
+    @Column(name="long_desc", type = ColumnTypes.TEXT)
     private String longDescription;
     
-    @Column(name="model_number")
+    @Column(name="model_number", type = ColumnTypes.TEXT)
     private String modelNumber;
     
-    @Column(name="name")
+    @Column(name="name", type = ColumnTypes.TEXT)
     private String name;
     
-    @Column(name="product_group")
+    @Column(name="product_group", type = ColumnTypes.TEXT)
     private String productGroup;
 
-    @Column(name="short_desc")
+    @Column(name="short_desc", type = ColumnTypes.TEXT)
     private String shortDescription;
     
-    @Column(name="specifications")
+    @Column(name="specifications", type = ColumnTypes.MAP, valueType = ColumnTypes.TEXT, keyType = ColumnTypes.TEXT)
     private Map<String, String> specifications;
+
+	public Product asProduct() {
+		Product pr = new Product();
+		pr.setProductId(getProductId());
+		pr.setBrand(getBrand());
+		pr.setImages(getImages());
+		pr.setLinkedDocuments(getLinkedDocuments());
+		pr.setLongDesc(getLongDescription());
+		pr.setShortDesc(getShortDescription());
+		pr.setSpecifications(getSpecifications());
+		pr.setModelNumber(getModelNumber());
+		pr.setName(getName());
+		pr.setProductGroup(getProductGroup());
+		return pr;
+	}
+
+	public ProductTableEntity(Product p) {
+		this.productId = p.getProductId();
+		this.brand = p.getBrand();
+		this.images = p.getImages();
+		this.linkedDocuments = p.getLinkedDocuments();
+		this.longDescription = p.getLongDesc();
+		this.modelNumber = p.getModelNumber();
+		this.name = p.getName();
+		this.productGroup = p.getProductGroup();
+		this.shortDescription = p.getShortDesc();
+		this.specifications = p.getSpecifications();
+	}
+
+	public ProductTableEntity() {
+	}
+
 
 	public String getProductId() {
 		return productId;

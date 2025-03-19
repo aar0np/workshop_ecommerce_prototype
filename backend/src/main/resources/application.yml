@@ -21,9 +21,11 @@ spring:
 
 astra:
   api:
-    application-token: ${ASTRA_DB_APP_TOKEN}
-    database-id: ${ASTRA_DB_ID}
-    database-region: ${ASTRA_DB_REGION}
+    application-token: ${ASTRA_DB_APPLICATION_TOKEN}
+    database-endpoint: https://30cdc24e-7a13-4825-8e22-b561b6bb5b33-us-east1.apps.astra.datastax.com
+    # not mandatory for data API
+    database-id: 30cdc24e-7a13-4825-8e22-b561b6bb5b33
+    database-region: us-east1
     cross-region-failback: false
   cql:
     enabled: true
@@ -31,7 +33,7 @@ astra:
       enabled: true
     driver-config:
       basic:
-        session-keyspace: ecommerce
+        session-keyspace: default_keyspace
         request:
           timeout: 8s
           consistency: LOCAL_QUORUM
