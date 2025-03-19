@@ -7,6 +7,7 @@ import com.datastax.astra.client.tables.mapping.Column;
 import com.datastax.astra.client.tables.mapping.EntityTable;
 import com.datastax.astra.client.tables.mapping.PartitionBy;
 import com.datastax.tutorials.service.product.Product;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +36,11 @@ public class ProductVectorsTableEntity {
 
 	@Column(name="category_id", type = ColumnTypes.UUID)
 	private UUID categoryId;
+
+	// Not mapped in the table but useful when returned
+
+	@JsonProperty("$similarity")
+	private Double similarity;
 
 	/**
 	 * Constructor
@@ -172,5 +178,23 @@ public class ProductVectorsTableEntity {
 	 */
 	public void setCategoryId(UUID categoryId) {
 		this.categoryId = categoryId;
+	}
+
+	/**
+	 * Gets similarity
+	 *
+	 * @return value of similarity
+	 */
+	public Double getSimilarity() {
+		return similarity;
+	}
+
+	/**
+	 * Set value for similarity
+	 *
+	 * @param similarity new value for similarity
+	 */
+	public void setSimilarity(Double similarity) {
+		this.similarity = similarity;
 	}
 }

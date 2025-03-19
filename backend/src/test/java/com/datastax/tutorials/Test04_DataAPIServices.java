@@ -1,10 +1,8 @@
 package com.datastax.tutorials;
 
-import com.datastax.astra.client.core.vector.DataAPIVector;
 import com.datastax.astra.client.tables.Table;
 import com.datastax.tutorials.service.dataapi.DataAPIServices;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
-import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import com.datastax.tutorials.service.product.Product;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
@@ -52,10 +50,41 @@ public class Test04_DataAPIServices {
     public void should_insert_product_with_vector() {
         Product p = new Product();
         p.setProductId("1234");
-        p.setName("this is a super long names to test the vector");
+        p.setName("Our premium dog food is a carefully crafted blend of high-quality proteins, wholesome grains, and garden-fresh vegetables that deliver balanced nutrition to support strong muscles, healthy digestion, and a vibrant coat in dogs of all life stages. Free from artificial additives and enriched with natural antioxidants, essential vitamins, and omega fatty acids, it fuels your dog’s adventures and nurtures overall well-being with every bite.");
         p.setBrand("Hermes");
         p.setModelNumber("234");
         dataAPIServices.saveVector(p);
+    }
+
+    @Test
+    public void should_vectorSearch() {
+        dataAPIServices.vectorSearchProducts("dog food")
+                .stream()
+                .forEach(p -> {
+                    System.out.println("Results: similarity=" + p.getSimilarity() + ", name= " + p.getProductId());
+                });
+    }
+
+    @Test
+    public void create_product_vectorize() {
+        dataAPIServices.saveProductVectorize(
+                "my-super-dog-good",
+                "Happy Doggy",
+                "Our premium dog food is a carefully crafted blend of high-quality proteins, " +
+                        "wholesome grains, and garden-fresh vegetables that deliver balanced nutrition " +
+                        "to support strong muscles, healthy digestion, and a vibrant coat in dogs of all " +
+                        "life stages. Free from artificial additives and enriched with natural antioxidants, " +
+                        "essential vitamins, and omega fatty acids, it fuels your dog’s adventures and nurtures" +
+                        " overall well-being with every bite.");
+    }
+
+    @Test
+    public void should_vectorizeSearch_test() {
+        dataAPIServices.vectorizeSearchProducts("dog food")
+                .stream()
+                .forEach(p -> {
+                    System.out.println("Results: similarity=" + p.getSimilarity() + ", name= " + p.getText("name"));
+                });
     }
 
 }

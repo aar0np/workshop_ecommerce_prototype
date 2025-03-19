@@ -2,8 +2,16 @@ package com.datastax.tutorials.service.dataapi;
 
 import com.datastax.astra.client.DataAPIClient;
 import com.datastax.astra.client.core.options.DataAPIClientOptions;
+import com.datastax.astra.client.core.vector.SimilarityMetric;
+import com.datastax.astra.client.core.vectorize.VectorServiceOptions;
 import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
+import com.datastax.astra.client.tables.commands.options.CreateTableOptions;
+import com.datastax.astra.client.tables.definition.TableDefinition;
+import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVector;
+import com.datastax.astra.client.tables.definition.columns.ColumnTypes;
+import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
+import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import org.slf4j.Logger;
@@ -52,11 +60,42 @@ public class DataAPIConfiguration {
 
     @Bean("table.product_vectors")
     public Table<ProductVectorsTableEntity> tableProductVectors(Database db) {
-        if (db.tableExists("product_vectoe")) {
+        if (db.tableExists("product_vectors")) {
             return db.getTable(ProductVectorsTableEntity.class);
         } else {
             logger.info("Table 'product' does not exist, creating it ...");
             return db.createTable(ProductVectorsTableEntity.class);
+        }
+    }
+
+    @Bean("table.product_vectorize")
+    public Table<Row> tableProductVectorize(Database db) {
+        if (db.tableExists("product_vectorize")) {
+            return db.getTable("product_vectorize");
+        } else {
+            logger.info("Table 'product_vectorize' does not exist, creating it ...");
+            // Table Creation
+            TableDefinition tableDefinition = new TableDefinition()
+                            // Define all of the columns in the table
+                            .addColumnText("product_id")
+                            .addColumnText("name")
+                            .addColumnText("description")
+                            .addColumnVector(
+                                    "product_vector",
+                                    new ColumnDefinitionVector()
+                                            .dimension(1024)
+                                            .metric(SimilarityMetric.COSINE)
+                                            .service(new VectorServiceOptions()
+                                                    .provider("nvidia").modelName("NV-Embed-QA")))
+                            .addPartitionBy("product_id");
+            db.createTable("product_vectorize", tableDefinition);
+
+            // Index creation
+            Table<Row> tableVectorize = db.getTable("product_vectorize");
+            tableVectorize.createVectorIndex("idx_product_vectorize", new TableVectorIndexDefinition()
+                    .column("product_vector")
+                    .metric(SimilarityMetric.COSINE));
+            return tableVectorize;
         }
     }
 

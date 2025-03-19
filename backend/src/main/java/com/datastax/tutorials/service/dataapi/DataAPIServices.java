@@ -1,18 +1,19 @@
 package com.datastax.tutorials.service.dataapi;
 
+import com.datastax.astra.client.core.query.Sort;
 import com.datastax.astra.client.core.vector.DataAPIVector;
 import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
+import com.datastax.astra.client.tables.commands.options.TableFindOptions;
+import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
-import com.datastax.tutorials.service.dataapi.entities.ProductVectorizeTableEntity;
 import com.datastax.tutorials.service.product.Product;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,6 +33,10 @@ public class DataAPIServices {
     @Autowired
     @Qualifier("table.product_vectors")
     Table<ProductVectorsTableEntity> productVectorRepository;
+
+    @Autowired
+    @Qualifier("table.product_vectorize")
+    Table<Row> productVectorizeRepository;
 
     EmbeddingModel embeddingModel;
 
@@ -72,13 +77,39 @@ public class DataAPIServices {
     }
 
     public void saveVector(Product p) {
-
         // Map all core features
         ProductVectorsTableEntity tve = new ProductVectorsTableEntity(p);
-
         // We need to compute the embeddings ourselves
         float[] embeddings = embeddingModel.embed(p.getName()).content().vector();
         tve.setProductVector(new DataAPIVector(embeddings));
+        // <---
         productVectorRepository.insertOne(tve);
+    }
+
+    public void saveProductVectorize(String id, String name, String description) {
+        productVectorizeRepository.insertOne(new Row()
+                .addText("product_id", id)
+                .addText("name", name)
+                .addText("description", description)
+                .addVectorize("product_vector", description));
+    }
+
+    public List<ProductVectorsTableEntity>  vectorSearchProducts(String query)  {
+        // Compute the query Embeddings
+        float[] queryEmbeddings =
+                embeddingModel.embed(query).content().vector();
+
+        // Search the vectors
+        return  productVectorRepository.find(null, new TableFindOptions()
+                .sort(Sort.vector("product_vector", queryEmbeddings))
+                .includeSimilarity(true)
+                .limit(10)).toList();
+    }
+
+    public List<Row> vectorizeSearchProducts(String description) {
+        return productVectorizeRepository.find(null, new TableFindOptions()
+                .sort(Sort.vectorize("product_vector", description))
+                .includeSimilarity(true)
+                .limit(10)).toList();
     }
 }
