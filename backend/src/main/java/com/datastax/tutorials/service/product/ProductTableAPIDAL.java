@@ -13,10 +13,9 @@ public class ProductTableAPIDAL {
 	final String API_ENDPOINT = System.getenv("DB_API_ENDPOINT");
 	final String KEYSPACE = System.getenv("ASTRA_DB_KEYSPACE");
 
-	Table<ProductTableEntity> productTable;
-	Table<Row> categoryTable;
-	Table<Row> priceTable;
-	Table<Row> featuredProductTable;
+	private Table<ProductTableEntity> productTable;
+	private Table<Row> categoryTable;
+	private Table<Row> priceTable;
 	
 	public ProductTableAPIDAL() {
 		DataAPIClient client = new DataAPIClient(TOKEN);
@@ -25,7 +24,6 @@ public class ProductTableAPIDAL {
 		productTable = dbAPI.getTable("product", ProductTableEntity.class);
 		categoryTable = dbAPI.getTable("category");
 		priceTable = dbAPI.getTable("price");
-		featuredProductTable = dbAPI.getTable("featured_product_groups");
 	}
 	
 	public Optional<ProductTableEntity>  getProductById(String productId) {

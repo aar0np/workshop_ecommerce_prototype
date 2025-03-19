@@ -45,6 +45,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class FeaturedRestController {
     /** Inject the repository. */
     private FeaturedRepository featuredRepo;
+    private FeaturedTableAPIDAL featuredTableAPIDAL;
 
     /**
      * Injection through constructor.
@@ -54,6 +55,8 @@ public class FeaturedRestController {
      */
     public FeaturedRestController(FeaturedRepository repo) {
         this.featuredRepo = repo;
+        
+        this.featuredTableAPIDAL = new FeaturedTableAPIDAL();
     }
 
     /**
@@ -95,11 +98,13 @@ public class FeaturedRestController {
             @PathVariable(value = "featureid")
             @Parameter(name = "featureid", description = "Featured products identifier", example = "202112")
             int featureId) {
-        // Get the partition (be careful unicity is here not ensured
-        List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
+        // Get the partition (be careful unicity is here not ensured)
+        //List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
+    	List<FeaturedTableEntity> e = featuredTableAPIDAL.getFeaturedProductById(featureId);
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();
-        }
+        } 
+        
         return ResponseEntity.ok(e.stream().map(this::mapFeatured));
     }
     
@@ -115,6 +120,17 @@ public class FeaturedRestController {
     	Featured fe = new Featured();
     	fe.setFeatureId(f.getKey().getFeatureId());
     	fe.setCategoryId(f.getKey().getCategoryId());
+    	fe.setName(f.getName());
+    	fe.setImage(f.getImage());
+    	fe.setParentId(f.getParentId());
+    	fe.setPrice(new BigDecimal(f.getPrice()));
+        return fe;
+    }
+    
+    private Featured mapFeatured(FeaturedTableEntity f) {
+    	Featured fe = new Featured();
+    	fe.setFeatureId(f.getFeaturedId());
+    	fe.setCategoryId(f.getCategoryId());
     	fe.setName(f.getName());
     	fe.setImage(f.getImage());
     	fe.setParentId(f.getParentId());
