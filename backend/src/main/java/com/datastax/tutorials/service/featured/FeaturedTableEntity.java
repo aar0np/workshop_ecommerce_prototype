@@ -35,8 +35,8 @@ public class FeaturedTableEntity {
 		return featureId;
 	}
 
-	public void setFeatureId(int featuredId) {
-		this.featureId = featuredId;
+	public void setFeatureId(int featureId) {
+		this.featureId = featureId;
 	}
 
 	public UUID getCategoryId() {

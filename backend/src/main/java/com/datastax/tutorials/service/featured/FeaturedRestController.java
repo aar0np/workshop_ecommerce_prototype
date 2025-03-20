@@ -44,7 +44,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Featured Service", description="Provide crud operations for Featured Products")
 public class FeaturedRestController {
     /** Inject the repository. */
-    private FeaturedRepository featuredRepo;
+    //private FeaturedRepository featuredRepo;
     private FeaturedTableAPIDAL featuredTableAPIDAL;
 
     /**
@@ -53,8 +53,9 @@ public class FeaturedRestController {
      * @param repo
      *      repository
      */
-    public FeaturedRestController(FeaturedRepository repo) {
-        this.featuredRepo = repo;
+    //public FeaturedRestController(FeaturedRepository repo) {
+    public FeaturedRestController() {
+        //this.featuredRepo = repo;
         
         this.featuredTableAPIDAL = new FeaturedTableAPIDAL();
     }
@@ -98,10 +99,11 @@ public class FeaturedRestController {
             @PathVariable(value = "featureid")
             @Parameter(name = "featureid", description = "Featured products identifier", example = "202112")
             int featureId) {
-        // Get the partition (be careful uniqueness here is not ensured)
+
+    	// Get the partition (be careful uniqueness here is not ensured)
         //List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
     	List<FeaturedTableEntity> e = featuredTableAPIDAL.getFeaturedProductsById(featureId);
-    	
+
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();
         } 
@@ -127,5 +129,4 @@ public class FeaturedRestController {
     	fe.setPrice(new BigDecimal(f.getPrice()));
         return fe;
     }
-
 }
