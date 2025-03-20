@@ -98,9 +98,10 @@ public class FeaturedRestController {
             @PathVariable(value = "featureid")
             @Parameter(name = "featureid", description = "Featured products identifier", example = "202112")
             int featureId) {
-        // Get the partition (be careful unicity is here not ensured)
+        // Get the partition (be careful uniqueness here is not ensured)
         //List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
-    	List<FeaturedTableEntity> e = featuredTableAPIDAL.getFeaturedProductById(featureId);
+    	List<FeaturedTableEntity> e = featuredTableAPIDAL.getFeaturedProductsById(featureId);
+    	
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();
         } 
@@ -116,20 +117,9 @@ public class FeaturedRestController {
      * @return
      *      rest bean
      */
-    private Featured mapFeatured(FeaturedEntity f) {
-    	Featured fe = new Featured();
-    	fe.setFeatureId(f.getKey().getFeatureId());
-    	fe.setCategoryId(f.getKey().getCategoryId());
-    	fe.setName(f.getName());
-    	fe.setImage(f.getImage());
-    	fe.setParentId(f.getParentId());
-    	fe.setPrice(new BigDecimal(f.getPrice()));
-        return fe;
-    }
-    
     private Featured mapFeatured(FeaturedTableEntity f) {
     	Featured fe = new Featured();
-    	fe.setFeatureId(f.getFeaturedId());
+    	fe.setFeatureId(f.getFeatureId());
     	fe.setCategoryId(f.getCategoryId());
     	fe.setName(f.getName());
     	fe.setImage(f.getImage());
@@ -137,4 +127,5 @@ public class FeaturedRestController {
     	fe.setPrice(new BigDecimal(f.getPrice()));
         return fe;
     }
+
 }

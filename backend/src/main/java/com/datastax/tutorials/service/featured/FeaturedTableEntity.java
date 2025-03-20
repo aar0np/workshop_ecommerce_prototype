@@ -10,33 +10,33 @@ import com.datastax.astra.client.tables.mapping.PartitionSort;
 
 @EntityTable("featured_product_groups")
 public class FeaturedTableEntity {
-	
+
 	@PartitionBy(0)
 	@Column(name="feature_id")
-	private int featuredId;
-
+	private int featureId;
+	
 	@PartitionSort(position=1, order=SortOrder.ASCENDING)
 	@Column(name="category_id")
-    private UUID categoryId;
-
+	private UUID categoryId;
+	
 	@Column(name="name")
-    private String name;
-    
-    @Column(name="image")
-    private String image;
+	private String name;
+	
+	@Column(name="image")
+	private String image;
+	
+	@Column(name="parent_id")
+	private UUID parentId;
+	
+	@Column(name="price")
+	private Double price;
 
-    @Column(name="parent_id")
-    private UUID parentId;
-
-    @Column(name="price")
-    private Double price;
-
-	public int getFeaturedId() {
-		return featuredId;
+	public int getFeatureId() {
+		return featureId;
 	}
 
-	public void setFeaturedId(int featuredId) {
-		this.featuredId = featuredId;
+	public void setFeatureId(int featuredId) {
+		this.featureId = featuredId;
 	}
 
 	public UUID getCategoryId() {
