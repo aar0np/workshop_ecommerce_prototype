@@ -1,11 +1,15 @@
 package com.datastax.tutorials.service.dataapi;
 
+import com.datastax.astra.client.core.query.Filters;
 import com.datastax.astra.client.core.query.Sort;
+import com.datastax.astra.client.core.query.SortOrder;
 import com.datastax.astra.client.core.vector.DataAPIVector;
 import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
 import com.datastax.astra.client.tables.commands.options.TableFindOptions;
+import com.datastax.astra.client.tables.cursor.TableCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
+import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import com.datastax.tutorials.service.product.Product;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +43,10 @@ public class DataAPIServices {
     @Qualifier("table.product_vectorize")
     Table<Row> productVectorizeRepository;
 
+    @Autowired
+    @Qualifier("table.featured_product_groups")
+    Table<FeaturedTableEntity> featuredProductRepository;
+    
     EmbeddingModel embeddingModel;
 
     @PostConstruct
@@ -112,4 +121,33 @@ public class DataAPIServices {
                 .includeSimilarity(true)
                 .limit(10)).toList();
     }
+    
+    public List<ProductVectorsTableEntity> findProductsByVector(DataAPIVector vector) {
+    	
+    	return productVectorRepository.find(null, new TableFindOptions()
+						.sort(Sort.vector("product_vector", vector))
+						.includeSimilarity(true)
+						.limit(8)).toList();
+    }
+    
+    public Optional<ProductVectorsTableEntity> findProductVectorById(String productId) {
+		return productVectorRepository.findOne(eq("product_id", productId));
+	}  
+    
+	public List<FeaturedTableEntity> getFeaturedProductsById(int featuredId) {
+		
+		List<FeaturedTableEntity> returnVal = new ArrayList<>();
+		
+		Sort sort = new Sort("price", SortOrder.DESCENDING, null, null);
+		TableFindOptions options = new TableFindOptions().sort(sort);
+		
+		TableCursor<FeaturedTableEntity, FeaturedTableEntity> results =
+				featuredProductRepository.find(Filters.eq("feature_id", featuredId), options);
+		
+		for (FeaturedTableEntity entity : results) {
+			returnVal.add(entity);
+		}
+		
+		return returnVal;
+	}
 }

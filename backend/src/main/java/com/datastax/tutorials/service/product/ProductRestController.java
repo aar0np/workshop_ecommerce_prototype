@@ -2,6 +2,8 @@ package com.datastax.tutorials.service.product;
 
 import com.datastax.tutorials.service.dataapi.DataAPIServices;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,7 +48,7 @@ public class ProductRestController {
 
     /** Inject the repository. */
 	// private ProductRepository productRepo;
-    private ProductVectorRepository productVectorRepo;
+    //private ProductVectorRepository productVectorRepo;
     
     private DataAPIServices dataApiServices;
     
@@ -60,9 +62,9 @@ public class ProductRestController {
      * @param repo
      *      repository
      */
-    public ProductRestController(ProductRepository repo, ProductVectorRepository vRepo, DataAPIServices dataApiService) {
+    public ProductRestController(DataAPIServices dataApiService) {
         //this.productRepo = repo;
-        this.productVectorRepo = vRepo;
+        //this.productVectorRepo = vRepo;
         this.dataApiServices = dataApiService;
     }
     
@@ -105,18 +107,18 @@ public class ProductRestController {
 
 		// get original product's vector
 		//Optional<ProductVector> originalProduct = vectorDAL.getProductVectorById(productid);
-		Optional<ProductVectorEntity> originalProduct = productVectorRepo.findById(productid);
+		Optional<ProductVectorsTableEntity> originalProduct = dataApiServices.findProductVectorById(productid);
 		
 		if (!originalProduct.isEmpty()) {
 			// product exists, now query by its vector to get the closest product match
 			
 			//List<ProductVector> ann = vectorDAL.getProductsByANN(originalProduct.get());
-			List<ProductVectorEntity> entityList = productVectorRepo.findProductsByVector(
+			List<ProductVectorsTableEntity> entityList = dataApiServices.findProductsByVector(
 					originalProduct.get().getProductVector());
 			
 			// convert entity results to List of POJO
 			List<ProductVector> ann = new ArrayList<ProductVector>();
-			for (ProductVectorEntity pve : entityList) {
+			for (ProductVectorsTableEntity pve : entityList) {
 				ann.add(mapProductVector(pve));
 			}
 			
@@ -128,7 +130,7 @@ public class ProductRestController {
 					// So, we will iterate through the list until we find the first product with a
 					// different product group.
 					
-					if (!prodGroup.equals(originalProduct.get().getProductGroup())) {
+					if (!prodGroup.equals(originalProduct.get().getGroup())) {
 
 						return ResponseEntity.ok(product);
 					}
@@ -178,14 +180,14 @@ public class ProductRestController {
         return pr;
     }
     
-    private ProductVector mapProductVector(ProductVectorEntity p) {
+    private ProductVector mapProductVector(ProductVectorsTableEntity p) {
     	ProductVector pv = new ProductVector();
     	pv.setProductId(p.getProductId());
     	pv.setCategoryId(p.getCategoryId());
     	pv.setImages(p.getImages());
     	pv.setParentId(p.getParentId());
-    	pv.setProductGroup(p.getProductGroup());
-    	pv.setProductName(p.getProductName());
+    	pv.setProductGroup(p.getGroup());
+    	pv.setProductName(p.getName());
     	pv.setProductVector(p.getProductVector());
     	
     	return pv;

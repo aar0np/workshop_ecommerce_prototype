@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,20 +47,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Featured Service", description="Provide crud operations for Featured Products")
 public class FeaturedRestController {
     /** Inject the repository. */
-    //private FeaturedRepository featuredRepo;
-    private FeaturedTableAPIDAL featuredTableAPIDAL;
-
+	private DataAPIServices dataApiServices;
     /**
      * Injection through constructor.
      *  
      * @param repo
      *      repository
      */
-    //public FeaturedRestController(FeaturedRepository repo) {
-    public FeaturedRestController() {
-        //this.featuredRepo = repo;
-        
-        this.featuredTableAPIDAL = new FeaturedTableAPIDAL();
+    public FeaturedRestController(DataAPIServices dataApiService) {
+    	this.dataApiServices = dataApiService;
     }
 
     /**
@@ -100,9 +98,7 @@ public class FeaturedRestController {
             @Parameter(name = "featureid", description = "Featured products identifier", example = "202112")
             int featureId) {
 
-    	// Get the partition (be careful uniqueness here is not ensured)
-        //List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
-    	List<FeaturedTableEntity> e = featuredTableAPIDAL.getFeaturedProductsById(featureId);
+    	List<FeaturedTableEntity> e = dataApiServices.getFeaturedProductsById(featureId);
 
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();

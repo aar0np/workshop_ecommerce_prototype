@@ -12,6 +12,7 @@ import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVecto
 import com.datastax.astra.client.tables.definition.columns.ColumnTypes;
 import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
 import com.datastax.astra.client.tables.definition.rows.Row;
+import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class DataAPIConfiguration {
             return db.createTable(ProductVectorsTableEntity.class);
         }
     }
-
+    
     @Bean("table.product_vectorize")
     public Table<Row> tableProductVectorize(Database db) {
         if (db.tableExists("product_vectorize")) {
@@ -99,4 +100,13 @@ public class DataAPIConfiguration {
         }
     }
 
+    @Bean("table.featured_product_groups")
+    public Table<FeaturedTableEntity> tableFeaturedProductGroups(Database db) {
+        if (db.tableExists("featured_product_groups")) {
+            return db.getTable(FeaturedTableEntity.class);
+        } else {
+            logger.info("Table 'product' does not exist, creating it ...");
+            return db.createTable(FeaturedTableEntity.class);
+        }
+    }
 }

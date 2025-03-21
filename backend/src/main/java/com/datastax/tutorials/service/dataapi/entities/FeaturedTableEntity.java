@@ -1,4 +1,4 @@
-package com.datastax.tutorials.service.featured;
+package com.datastax.tutorials.service.dataapi.entities;
 
 import java.util.UUID;
 
