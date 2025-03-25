@@ -54,8 +54,8 @@ public class FeaturedRestController {
      * @param repo
      *      repository
      */
-    public FeaturedRestController(DataAPIServices dataApiService) {
-    	this.dataApiServices = dataApiService;
+    public FeaturedRestController(DataAPIServices dataApiServices) {
+    	this.dataApiServices = dataApiServices;
     }
 
     /**

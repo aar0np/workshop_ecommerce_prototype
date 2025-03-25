@@ -7,7 +7,6 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<!-- <version>2.6.1</version> -->
 		<version>3.4.3</version>
 		<relativePath/>
 	</parent>
@@ -18,8 +17,8 @@
 	<name>demo</name>
 
 	<properties>
-	   <maven.compiler.source>21</maven.compiler.source>
-	   <maven.compiler.target>21</maven.compiler.target>
+	   <maven.compiler.source>24</maven.compiler.source>
+	   <maven.compiler.target>24</maven.compiler.target>
 	</properties>
 	  
 	<dependencies>

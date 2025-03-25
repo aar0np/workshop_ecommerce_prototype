@@ -1,5 +1,6 @@
 package com.datastax.tutorials.service.dataapi;
 
+import com.datastax.astra.client.core.query.Filter;
 import com.datastax.astra.client.core.query.Filters;
 import com.datastax.astra.client.core.query.Sort;
 import com.datastax.astra.client.core.query.SortOrder;
@@ -10,6 +11,7 @@ import com.datastax.astra.client.tables.commands.options.TableFindOptions;
 import com.datastax.astra.client.tables.cursor.TableCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import com.datastax.tutorials.service.product.Product;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.datastax.astra.client.core.query.Filters.eq;
@@ -46,6 +49,10 @@ public class DataAPIServices {
     @Autowired
     @Qualifier("table.featured_product_groups")
     Table<FeaturedTableEntity> featuredProductRepository;
+    
+    @Autowired
+    @Qualifier("table.price")
+    Table<PriceTableEntity> priceRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -149,5 +156,28 @@ public class DataAPIServices {
 		}
 		
 		return returnVal;
+	}
+	
+	public List<PriceTableEntity> getAllPricesByProductId(String productId) {
+		
+		List<PriceTableEntity> returnVal = new ArrayList<>();
+		
+		Sort sort = new Sort("value", SortOrder.DESCENDING, null, null);
+		TableFindOptions options = new TableFindOptions().sort(sort);
+		
+		TableCursor<PriceTableEntity, PriceTableEntity> results =
+				priceRepository.find(Filters.eq("product_id", productId), options);
+		
+		for (PriceTableEntity entity : results) {
+			returnVal.add(entity);
+		}
+		
+		return returnVal;
+	}
+	
+	public Optional<PriceTableEntity> getPriceByProductIdAndStoreId(String productId, String storeId) {
+		Filter filter  = new Filter(Map.of("product_id", productId, "store_id", storeId));
+		
+		return priceRepository.findOne(filter);
 	}
 }

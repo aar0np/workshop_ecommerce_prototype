@@ -1,7 +1,6 @@
 package com.datastax.tutorials.service.product;
 
 import com.datastax.tutorials.service.dataapi.DataAPIServices;
-import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,9 +46,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class ProductRestController {
 
     /** Inject the repository. */
-	// private ProductRepository productRepo;
-    //private ProductVectorRepository productVectorRepo;
-    
     private DataAPIServices dataApiServices;
     
     // Need separate DAL for vector-related queries
@@ -63,8 +59,6 @@ public class ProductRestController {
      *      repository
      */
     public ProductRestController(DataAPIServices dataApiService) {
-        //this.productRepo = repo;
-        //this.productVectorRepo = vRepo;
         this.dataApiServices = dataApiService;
     }
     
@@ -106,15 +100,14 @@ public class ProductRestController {
             String productid) {
 
 		// get original product's vector
-		//Optional<ProductVector> originalProduct = vectorDAL.getProductVectorById(productid);
-		Optional<ProductVectorsTableEntity> originalProduct = dataApiServices.findProductVectorById(productid);
+		Optional<ProductVectorsTableEntity> originalProduct = 
+				dataApiServices.findProductVectorById(productid);
 		
 		if (!originalProduct.isEmpty()) {
 			// product exists, now query by its vector to get the closest product match
-			
-			//List<ProductVector> ann = vectorDAL.getProductsByANN(originalProduct.get());
-			List<ProductVectorsTableEntity> entityList = dataApiServices.findProductsByVector(
-					originalProduct.get().getProductVector());
+						
+			List<ProductVectorsTableEntity> entityList =
+					dataApiServices.findProductsByVector(originalProduct.get().getProductVector());
 			
 			// convert entity results to List of POJO
 			List<ProductVector> ann = new ArrayList<ProductVector>();
@@ -141,45 +134,6 @@ public class ProductRestController {
 		return ResponseEntity.notFound().build();
 	}
 	
-    /**
-     * Mapping Entity => REST.
-     *
-     * @param p
-     *      entity
-     * @return
-     *      rest bean
-     *
-    private Product mapProduct(ProductEntity p) {
-        Product pr = new Product();
-        pr.setProductId(p.getProductId());
-        pr.setBrand(p.getBrand());
-        pr.setImages(p.getImages());
-        pr.setLinkedDocuments(p.getLinkedDocuments());
-        pr.setLongDesc(p.getLongDescription());
-        pr.setShortDesc(p.getShortDescription());
-        pr.setSpecifications(p.getSpecifications());
-        pr.setModelNumber(p.getModelNumber());
-        pr.setName(p.getName());
-        pr.setProductGroup(p.getProductGroup());
-         return pr;
-    }
-     */
-
-    private Product mapProductTableEntity(ProductTableEntity p) {
-        Product pr = new Product();
-        pr.setProductId(p.getProductId());
-        pr.setBrand(p.getBrand());
-        pr.setImages(p.getImages());
-        pr.setLinkedDocuments(p.getLinkedDocuments());
-        pr.setLongDesc(p.getLongDescription());
-        pr.setShortDesc(p.getShortDescription());
-        pr.setSpecifications(p.getSpecifications());
-        pr.setModelNumber(p.getModelNumber());
-        pr.setName(p.getName());
-        pr.setProductGroup(p.getProductGroup());
-        return pr;
-    }
-    
     private ProductVector mapProductVector(ProductVectorsTableEntity p) {
     	ProductVector pv = new ProductVector();
     	pv.setProductId(p.getProductId());

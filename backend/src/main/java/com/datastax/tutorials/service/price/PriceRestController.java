@@ -8,6 +8,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,6 +54,7 @@ public class PriceRestController {
     
     /** Inject the repository. */
     private PriceRepository priceRepo;
+    private DataAPIServices dataApiServices;
     
     /**
      * Injection through constructor.
@@ -57,8 +62,9 @@ public class PriceRestController {
      * @param repo
      *      repository
      */
-    public PriceRestController(PriceRepository repo) {
-        this.priceRepo = repo;
+    public PriceRestController(PriceRepository priceRepo, DataAPIServices dataAPIRepo) {
+    	this.priceRepo = priceRepo;
+        this.dataApiServices = dataAPIRepo;
     }
     
     /**
@@ -101,6 +107,8 @@ public class PriceRestController {
             String productid) {
         // Get the partition (be careful unicity is here not ensured
         List<PriceEntity> e = priceRepo.findByKeyProductId(productid);
+    	//List<PriceTableEntity> e = dataApiServices.getAllPricesByProductId(productid);
+    	
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -167,9 +175,12 @@ public class PriceRestController {
             @PathVariable(value = "storeId")
             @Parameter(name = "storeId", description = "Store identifier", example = "web")
             String storeId) {
-        Optional<PriceEntity> pe = 
-                priceRepo.findByKeyProductIdAndKeyStoreId(productid, storeId);
-        return pe.isPresent() ? 
+    	
+        Optional<PriceTableEntity> pe = 
+                dataApiServices.getPriceByProductIdAndStoreId(productid, storeId);
+        //Optional<PriceEntity> pe = 
+        //        priceRepo.findByKeyProductIdAndKeyStoreId(productid, storeId);
+    	return pe.isPresent() ? 
                 ResponseEntity.ok(mapPrice(pe.get())) : 
                 ResponseEntity.notFound().build();
     }       
@@ -190,4 +201,11 @@ public class PriceRestController {
         return pr;
     }
     
+    private Price mapPrice(PriceTableEntity p) {
+        Price pr = new Price();
+        pr.setProductId(p.getProductId());
+        pr.setStoreId(p.getStoreId());
+        pr.setValue(p.getValue());
+        return pr;
+    }  
 }

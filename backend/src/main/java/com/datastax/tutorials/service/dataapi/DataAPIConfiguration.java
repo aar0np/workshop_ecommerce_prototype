@@ -6,13 +6,12 @@ import com.datastax.astra.client.core.vector.SimilarityMetric;
 import com.datastax.astra.client.core.vectorize.VectorServiceOptions;
 import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
-import com.datastax.astra.client.tables.commands.options.CreateTableOptions;
 import com.datastax.astra.client.tables.definition.TableDefinition;
 import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVector;
-import com.datastax.astra.client.tables.definition.columns.ColumnTypes;
 import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
 import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
 import org.slf4j.Logger;
@@ -64,7 +63,7 @@ public class DataAPIConfiguration {
         if (db.tableExists("product_vectors")) {
             return db.getTable(ProductVectorsTableEntity.class);
         } else {
-            logger.info("Table 'product' does not exist, creating it ...");
+            logger.info("Table 'product_vectors' does not exist, creating it ...");
             return db.createTable(ProductVectorsTableEntity.class);
         }
     }
@@ -109,4 +108,14 @@ public class DataAPIConfiguration {
             return db.createTable(FeaturedTableEntity.class);
         }
     }
+    
+    @Bean("table.price")
+    public Table<PriceTableEntity> tablePrice(Database db) {
+		if (db.tableExists("price")) {
+			return db.getTable(PriceTableEntity.class);
+		} else {
+			logger.info("Table 'price' does not exist, creating it ...");
+			return db.createTable(PriceTableEntity.class);
+		}
+	}
 }
