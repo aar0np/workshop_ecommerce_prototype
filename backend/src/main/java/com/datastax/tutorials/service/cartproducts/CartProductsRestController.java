@@ -151,16 +151,36 @@ public class CartProductsRestController {
     	//   set timestamp
     	product.setProductTimestamp(new Date());
 
-    	// map CartProduct to entity
-    	CartProductEntity cpe = mapCartProductEntity(product);
-    	    	
-    	// save to DB
-    	cartProductsRepo.save(cpe);
+    	// get current cart contents
+    	List<CartProductEntity> cart = cartProductsRepo.findByKeyCartId(cartid);
+    	boolean found = false;
     	
-    	// return current cart contents
-    	List<CartProductEntity> returnVal = cartProductsRepo.findByKeyCartId(cartid);
+    	// iterate through cart
+    	for (CartProductEntity cpe : cart) {
+    		
+    		// check for productid
+    		if (cpe.getKey().getProductId().equals(productid)) {
+    			// FOUND
+    			found = true;
+    			// update quantity
+    			cpe.setQuantity(cpe.getQuantity() + product.getQuantity());   
+    			cartProductsRepo.save(cpe);
+    			break;
+    		}
+    	}
     	
-    	return ResponseEntity.ok(returnVal.stream().map(this::mapCartProduct));
+    	if (!found) {
+    		// map CartProduct to entity
+	    	CartProductEntity cpe = mapCartProductEntity(product);
+	    	// save to DB
+	    	cartProductsRepo.save(cpe);
+	    	// add to in-memory cart
+	    	cart.add(cpe);
+
+    	}
+    	
+    	// return current cart contents    	
+    	return ResponseEntity.ok(cart.stream().map(this::mapCartProduct));
     }
     
     /**
