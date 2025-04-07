@@ -10,6 +10,7 @@ import com.datastax.astra.client.tables.definition.TableDefinition;
 import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVector;
 import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
 import com.datastax.astra.client.tables.definition.rows.Row;
+import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
@@ -118,4 +119,14 @@ public class DataAPIConfiguration {
 			return db.createTable(PriceTableEntity.class);
 		}
 	}
+    
+    @Bean("table.cart_products")
+    public Table<CartProductTableEntity> tableCartProduct(Database db) {
+    	if (db.tableExists("cart_products")) {
+			return db.getTable(CartProductTableEntity.class);
+		} else {
+			logger.info("Table 'cart_products' does not exist, creating it ...");
+			return db.createTable(CartProductTableEntity.class);
+		}
+    }
 }

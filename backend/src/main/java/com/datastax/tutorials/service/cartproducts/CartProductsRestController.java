@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,10 +52,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Cart Products Service", description="Provide crud operations for Cart Products")
 public class CartProductsRestController {
 
-	private CartProductsRepository cartProductsRepo;
+	private DataAPIServices dataApiServices;
 	
-	public CartProductsRestController (CartProductsRepository repo) {
-		cartProductsRepo = repo;
+	public CartProductsRestController (DataAPIServices dataAPIRepo) {
+		dataApiServices = dataAPIRepo;
 	}
 	
     /**
@@ -93,9 +96,9 @@ public class CartProductsRestController {
             @PathVariable(value = "cartid")
             @Parameter(name = "cartid", description = "cart identifier (UUID)", example = "5929e846-53e8-473e-8525-80b666c46a83")
             UUID cartid) {
-    	List<CartProductEntity> e = cartProductsRepo.findByKeyCartId(cartid);
+    	List<CartProductTableEntity> results = dataApiServices.getCartProductByCartId(cartid);
     
-    	return ResponseEntity.ok(e.stream().map(this::mapCartProduct));
+    	return ResponseEntity.ok(results.stream().map(this::mapCartProduct));
     }
     
     /**
@@ -152,31 +155,32 @@ public class CartProductsRestController {
     	product.setProductTimestamp(new Date());
 
     	// get current cart contents
-    	List<CartProductEntity> cart = cartProductsRepo.findByKeyCartId(cartid);
+    	List<CartProductTableEntity> cart = dataApiServices.getCartProductByCartId(cartid);
     	boolean found = false;
     	
     	// iterate through cart
-    	for (CartProductEntity cpe : cart) {
+    	for (CartProductTableEntity cpe : cart) {
     		
     		// check for productid
-    		if (cpe.getKey().getProductId().equals(productid)) {
+    		if (cpe.getProductId().equals(productid)) {
     			// FOUND
     			found = true;
     			// update quantity
     			cpe.setQuantity(cpe.getQuantity() + product.getQuantity());   
-    			cartProductsRepo.save(cpe);
+
+    			// save to DB
+    			dataApiServices.saveCartProduct(cpe);
     			break;
     		}
     	}
     	
     	if (!found) {
     		// map CartProduct to entity
-	    	CartProductEntity cpe = mapCartProductEntity(product);
+	    	CartProductTableEntity cpe = mapCartProductTableEntity(product);
 	    	// save to DB
-	    	cartProductsRepo.save(cpe);
+	    	dataApiServices.saveCartProduct(cpe);
 	    	// add to in-memory cart
 	    	cart.add(cpe);
-
     	}
     	
     	// return current cart contents    	
@@ -228,16 +232,16 @@ public class CartProductsRestController {
             String productid) {
     	
     	// get current cart
-    	List<CartProductEntity> cart = cartProductsRepo.findByKeyCartId(cartid);
-    	List<CartProductEntity> returnVal = new ArrayList<CartProductEntity>();
+    	List<CartProductTableEntity> cart = dataApiServices.getCartProductByCartId(cartid);
+    	List<CartProductTableEntity> returnVal = new ArrayList<CartProductTableEntity>();
     	
     	// iterate through cart
-    	for (CartProductEntity cpe : cart) {
+    	for (CartProductTableEntity cpe : cart) {
     		
     		// check for productid
-    		if (cpe.getKey().getProductId().equals(productid)) {
+    		if (cpe.getProductId().equals(productid)) {
     			// delete
-    			cartProductsRepo.delete(cpe);
+    			dataApiServices.deleteCartProduct(cpe.getCartId(), cpe.getProductId(), cpe.getProductTimestamp());
     			
     		} else {
     			returnVal.add(cpe);
@@ -249,42 +253,39 @@ public class CartProductsRestController {
     }
     
     /**
-     * Mapping Entity => REST.
+     * Mapping Entity => POJO.
      *
      * @param p
      *      entity
      * @return
-     *      rest bean
+     *      POJO bean
      */
-    private CartProduct mapCartProduct(CartProductEntity _cpe) {
+    private CartProduct mapCartProduct(CartProductTableEntity _cpe) {
         CartProduct cp = new CartProduct();
-        cp.setCartId(_cpe.getKey().getCartId());
-        cp.setProductTimestamp(_cpe.getKey().getProductTimestamp());
-        cp.setProductId(_cpe.getKey().getProductId());
-        cp.setProductDesc(_cpe.getProductDesc());
+        cp.setCartId(_cpe.getCartId());
+        cp.setProductTimestamp(Date.from(_cpe.getProductTimestamp()));
+        cp.setProductId(_cpe.getProductId());
+        cp.setProductDesc(_cpe.getProductDescription());
         cp.setProductName(_cpe.getProductName());
         cp.setQuantity(_cpe.getQuantity());
         return cp;
     }
-
+    
     /**
-     * Mapping Rest => Entity.
+     * Mapping POJO => Entity.
      *
-     * @param p
-     *      rest bean
+     * @param _cp
+     *      POJO
      * @return
      *      entity
      */
-    private CartProductEntity mapCartProductEntity(CartProduct _cp) {
-        CartProductEntity cpe = new CartProductEntity();
-        CartProductsPrimaryKey cpepk = new CartProductsPrimaryKey();
+    private CartProductTableEntity mapCartProductTableEntity(CartProduct _cp) {
+        CartProductTableEntity cpe = new CartProductTableEntity();
         
-        cpepk.setCartId(_cp.getCartId());
-        cpepk.setProductTimestamp(_cp.getProductTimestamp());
-        cpepk.setProductId(_cp.getProductId());
-        
-        cpe.setKey(cpepk);
-        cpe.setProductDesc(_cp.getProductDesc());
+        cpe.setCartId(_cp.getCartId());
+        cpe.setProductTimestamp(_cp.getProductTimestamp().toInstant());
+        cpe.setProductId(_cp.getProductId());
+        cpe.setProductDescription(_cp.getProductDesc());
         cpe.setProductName(_cp.getProductName());
         cpe.setQuantity(_cp.getQuantity());
         return cpe;

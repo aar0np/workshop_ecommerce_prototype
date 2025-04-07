@@ -10,6 +10,7 @@ import com.datastax.astra.client.tables.Table;
 import com.datastax.astra.client.tables.commands.options.TableFindOptions;
 import com.datastax.astra.client.tables.cursor.TableCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
+import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
@@ -22,10 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.datastax.astra.client.core.query.Filters.eq;
 
@@ -53,6 +56,10 @@ public class DataAPIServices {
     @Autowired
     @Qualifier("table.price")
     Table<PriceTableEntity> priceRepository;
+    
+    @Autowired
+    @Qualifier("table.cart_products")
+    Table<CartProductTableEntity> cartProductRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -179,5 +186,29 @@ public class DataAPIServices {
 		Filter filter  = new Filter(Map.of("product_id", productId, "store_id", storeId));
 		
 		return priceRepository.findOne(filter);
+	}
+	
+	public List<CartProductTableEntity> getCartProductByCartId(UUID cartId) {
+		Filter filter  = new Filter(Map.of("cart_id", cartId));
+		
+		TableCursor<CartProductTableEntity, CartProductTableEntity> results =
+				cartProductRepository.find(filter);
+		List<CartProductTableEntity> returnVal = new ArrayList<>();
+		
+		for (CartProductTableEntity entity : results) {
+			returnVal.add(entity);
+		}
+		
+		return returnVal;
+	}
+	
+	public void saveCartProduct(CartProductTableEntity cartProduct) {
+		cartProductRepository.insertOne(cartProduct);
+	}
+	
+	public void deleteCartProduct(UUID cartId, String productId, Instant productTimestamp) {
+		Filter filter = new Filter(Map.of("cart_id", cartId, "product_timestamp", productTimestamp, "product_id", productId));
+		
+		cartProductRepository.deleteOne(filter);
 	}
 }
