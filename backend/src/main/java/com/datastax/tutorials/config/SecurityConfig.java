@@ -61,6 +61,7 @@ public class SecurityConfig {
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring().requestMatchers("/api/v1/products/**",
                 "/api/v1/categories/**",
+                "/api/v1/categories/category/**",
                 "/api/v1/prices/**",
                 "/api/v1/featured/**",
                 "/api/v1/carts/**",

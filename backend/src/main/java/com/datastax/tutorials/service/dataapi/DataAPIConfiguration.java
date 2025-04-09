@@ -11,6 +11,7 @@ import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVecto
 import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
 import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
@@ -129,4 +130,14 @@ public class DataAPIConfiguration {
 			return db.createTable(CartProductTableEntity.class);
 		}
     }
+    
+    @Bean("table.category")
+    public Table<CategoryTableEntity> tableCategory(Database db) {
+		if (db.tableExists("category")) {
+			return db.getTable(CategoryTableEntity.class);
+		} else {
+			logger.info("Table 'category' does not exist, creating it ...");
+			return db.createTable(CategoryTableEntity.class);
+		}
+	}
 }

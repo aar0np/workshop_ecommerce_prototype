@@ -11,6 +11,7 @@ import com.datastax.astra.client.tables.commands.options.TableFindOptions;
 import com.datastax.astra.client.tables.cursor.TableCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
@@ -60,6 +61,10 @@ public class DataAPIServices {
     @Autowired
     @Qualifier("table.cart_products")
     Table<CartProductTableEntity> cartProductRepository;
+    
+    @Autowired
+    @Qualifier("table.category")
+    Table<CategoryTableEntity> categoryRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -210,5 +215,17 @@ public class DataAPIServices {
 		Filter filter = new Filter(Map.of("cart_id", cartId, "product_timestamp", productTimestamp, "product_id", productId));
 		
 		cartProductRepository.deleteOne(filter);
+	}
+	
+	public List<CategoryTableEntity> getCategoriesByParentId(UUID parentId) {
+		Filter filter  = new Filter(Map.of("parent_id", parentId));
+		
+		return categoryRepository.find(filter).toList();
+	}
+	
+	public List<CategoryTableEntity> getCategoriesByParentIdAndCategoryId(UUID parentId, UUID categoryId) {
+		Filter filter  = new Filter(Map.of("parent_id", parentId, "category_id", categoryId));
+		
+		return categoryRepository.find(filter).toList();
 	}
 }
