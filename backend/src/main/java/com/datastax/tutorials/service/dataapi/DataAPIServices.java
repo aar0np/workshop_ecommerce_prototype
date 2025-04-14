@@ -2,11 +2,13 @@ package com.datastax.tutorials.service.dataapi;
 
 import com.datastax.astra.client.core.query.Filter;
 import com.datastax.astra.client.core.query.Filters;
+import com.datastax.astra.client.core.query.Projection;
 import com.datastax.astra.client.core.query.Sort;
 import com.datastax.astra.client.core.query.SortOrder;
 import com.datastax.astra.client.core.vector.DataAPIVector;
 import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
+import com.datastax.astra.client.tables.commands.options.TableFindOneOptions;
 import com.datastax.astra.client.tables.commands.options.TableFindOptions;
 import com.datastax.astra.client.tables.cursor.TableCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
@@ -16,7 +18,11 @@ import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
 import com.datastax.tutorials.service.product.Product;
+import com.datastax.tutorials.service.user.User;
+
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import jakarta.annotation.PostConstruct;
@@ -65,6 +71,14 @@ public class DataAPIServices {
     @Autowired
     @Qualifier("table.category")
     Table<CategoryTableEntity> categoryRepository;
+    
+    @Autowired
+    @Qualifier("table.user")
+    Table<UserTableEntity> userRepository;
+
+    @Autowired
+    @Qualifier("table.user_by_email")
+    Table<UserByEmailTableEntity> userByEmailRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -155,19 +169,13 @@ public class DataAPIServices {
     
 	public List<FeaturedTableEntity> getFeaturedProductsById(int featuredId) {
 		
-		List<FeaturedTableEntity> returnVal = new ArrayList<>();
-		
 		Sort sort = new Sort("price", SortOrder.DESCENDING, null, null);
 		TableFindOptions options = new TableFindOptions().sort(sort);
 		
 		TableCursor<FeaturedTableEntity, FeaturedTableEntity> results =
 				featuredProductRepository.find(Filters.eq("feature_id", featuredId), options);
-		
-		for (FeaturedTableEntity entity : results) {
-			returnVal.add(entity);
-		}
-		
-		return returnVal;
+				
+		return results.toList();
 	}
 	
 	public List<PriceTableEntity> getAllPricesByProductId(String productId) {
@@ -227,5 +235,33 @@ public class DataAPIServices {
 		Filter filter  = new Filter(Map.of("parent_id", parentId, "category_id", categoryId));
 		
 		return categoryRepository.find(filter).toList();
+	}
+	
+	public Optional<UserByEmailTableEntity> getUserByEmail(String email) {
+		Filter filter  = new Filter(Map.of("user_email", email));
+		
+		return userByEmailRepository.findOne(filter);
+	}
+	
+	public void saveUserByEmail(UserByEmailTableEntity user) {
+		userByEmailRepository.insertOne(user);
+	}
+	
+	public void saveUser(UserTableEntity user) {
+		userRepository.insertOne(user);
+	}
+	
+	public Optional<UserTableEntity> getUserById(UUID userId) {
+		Filter filter  = new Filter(Map.of("user_id", userId));
+		Projection projection = new Projection("addresses",false);
+		TableFindOneOptions options = new TableFindOneOptions()
+				.projection(projection);
+		return userRepository.findOne(filter, options);
+	}
+	
+	public void deleteUserByEmail(String email) {
+		Filter filter  = new Filter(Map.of("user_email", email));
+		
+		userByEmailRepository.deleteOne(filter);
 	}
 }

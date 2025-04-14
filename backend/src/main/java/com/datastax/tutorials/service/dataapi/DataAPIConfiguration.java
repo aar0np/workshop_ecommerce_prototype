@@ -16,6 +16,9 @@ import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -140,4 +143,24 @@ public class DataAPIConfiguration {
 			return db.createTable(CategoryTableEntity.class);
 		}
 	}
+    
+    @Bean("table.user")
+    public Table<UserTableEntity> tableUser(Database db) {
+		if (db.tableExists("user")) {
+			return db.getTable(UserTableEntity.class);
+		} else {
+			logger.info("Table 'user' does not exist, creating it ...");
+			return db.createTable(UserTableEntity.class);
+		}
+    }
+    
+    @Bean("table.user_by_email")
+    public Table<UserByEmailTableEntity> tableUserByEmail(Database db) {
+		if (db.tableExists("user_by_email")) {
+			return db.getTable(UserByEmailTableEntity.class);
+		} else {
+			logger.info("Table 'user_by_email' does not exist, creating it ...");
+			return db.createTable(UserByEmailTableEntity.class);
+		}
+    }
 }

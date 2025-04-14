@@ -30,6 +30,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -55,18 +59,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserRestController {
 	
     /** Inject the repositories. */
-    private UserRepository userRepo;
-    private UserByEmailRepository userByEmailRepo;
-    
+    //private UserRepository userRepo;
+    //private UserByEmailRepository userByEmailRepo;
+	private DataAPIServices dataApiServices;
+	
     /**
      * Injection through constructor.
      *  
      * @param repo
      *      repository
      */
-    public UserRestController(UserRepository uRepo, UserByEmailRepository ueRepo) {
-    	userRepo = uRepo;
-    	userByEmailRepo = ueRepo;
+    public UserRestController(DataAPIServices dataApiServices) {
+    	//userRepo = uRepo;
+    	//userByEmailRepo = ueRepo;
+    	this.dataApiServices = dataApiServices;
     }
     
     @GetMapping("/user")
@@ -97,16 +103,16 @@ public class UserRestController {
     	//Called by GitHub or Google login APIs
     	
     	UUID userId = null;
-    	UserEntity user = null;
+    	UserTableEntity user = null;
     	
     	//check if this is a returning user
     	// Both Google and GitHub have an "email" attribute
     	String email = principal.getAttribute("email");
-    	Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(email);
+    	Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(email);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
-    		user = new UserEntity();
+    		user = new UserTableEntity();
     		// need a userId, but we also need a way to get/transfer the one from the website
     		userId = UUID.randomUUID();
     		user.setUserId(userId);
@@ -121,18 +127,18 @@ public class UserRestController {
     		}
     		
            	if (email != null) {
-           		UserByEmailEntity userByE = new UserByEmailEntity();
+           		UserByEmailTableEntity userByE = new UserByEmailTableEntity();
            		userByE.setUserEmail(email);
            		userByE.setUserId(userId);
-           		userByEmailRepo.save(userByE);
+           		dataApiServices.saveUserByEmail(userByE);
            	}
            	
-           	userRepo.save(user);
+           	dataApiServices.saveUser(user);
            	
     	} else {
 	    	// existing user found!
 	    	userId = existingUser.get().getUserId();
-	        Optional<UserEntity> userO = userRepo.findById(userId);
+	        Optional<UserTableEntity> userO = dataApiServices.getUserById(userId);
 	        
 	        if (!userO.isPresent()) {
 	        	// catch-all, if for whatever reason a valid userId can't yield an existing user
@@ -145,9 +151,7 @@ public class UserRestController {
 	        }
     	}
 
-       	//returnVal.put("name", principal.getAttribute("name"));
         return ResponseEntity.ok(mapUser(user));
-    	//return returnVal;
     }
     
     @GetMapping("/user/{userid}")
@@ -178,7 +182,7 @@ public class UserRestController {
             @Parameter(name = "userid", description = "user identifier (UUID)", example = "5929e846-53e8-473e-8525-80b666c46a83")
             UUID userid) {
 
-        Optional<UserEntity> user = userRepo.findById(userid);
+        Optional<UserTableEntity> user = dataApiServices.getUserById(userid);
         
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -214,11 +218,11 @@ public class UserRestController {
             @Parameter(name = "email", description = "email address", example = "bob.slydell@bobsconsulting.com")
             String email) {
 
-    	Optional<UserByEmailEntity> userByEmail = userByEmailRepo.findById(email);
+    	Optional<UserByEmailTableEntity> userByEmail = dataApiServices.getUserByEmail(email);
     	
     	if (userByEmail.isPresent()) {
     		// now pull the user data 
-	        Optional<UserEntity> user = userRepo.findById(userByEmail.get().getUserId());
+	        Optional<UserTableEntity> user = dataApiServices.getUserById(userByEmail.get().getUserId());
 	        
 	        if (!user.isPresent()) {
 	        	// extra bullet proofing, just in case user is null (for whatever reason)
@@ -269,7 +273,7 @@ public class UserRestController {
     	String userSessionId = userData.getSessionId();
     	
     	//check if this is a returning user
-    	Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(userEmail);
+    	Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(userEmail);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
@@ -279,7 +283,7 @@ public class UserRestController {
 	    	String hashedPassword = pEncoder.encode(userData.getPassword());
 	    	
 	    	// user save
-	    	UserEntity userE = new UserEntity();
+	    	UserTableEntity userE = new UserTableEntity();
 	    	//Required User properties
 	    	userE.setUserId(userid);
 	    	userE.setPassword(hashedPassword);
@@ -300,23 +304,23 @@ public class UserRestController {
 	           	userE.setLocale(userData.getLocale());       		
 	       	}
 	       	
-	       	if (userData.getAddresses() != null ) {
-	       		userE.setAddresses(mapAddressEntity(userData.getAddresses()));
-	       	}
+	       	//if (userData.getAddresses() != null ) {
+	       	//	userE.setAddresses(mapAddressEntity(userData.getAddresses()));
+	       	//}
 	       	
 	       	// user_by_email save
-	    	UserByEmailEntity userByEmailE = new UserByEmailEntity();
+	    	UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
 	    	userByEmailE.setUserId(userid);
 	    	userByEmailE.setUserEmail(userEmail);
 	        	
 	    	// save to DB
-	    	userRepo.save(userE);
-	    	userByEmailRepo.save(userByEmailE);
+	    	dataApiServices.saveUser(userE);
+	    	dataApiServices.saveUserByEmail(userByEmailE);
 	    	
 	    	// return user data
 	    	return ResponseEntity.ok(mapUser(userE));
     	} else {
-    		Optional<UserEntity> userE = userRepo.findById(existingUser.get().getUserId());
+    		Optional<UserTableEntity> userE = dataApiServices.getUserById(existingUser.get().getUserId());
     		
     		return ResponseEntity.ok(mapUser(userE.get()));
     	}
@@ -358,7 +362,7 @@ public class UserRestController {
     	boolean emailChanged = false;
 
     	// user save
-    	UserEntity userE = new UserEntity();
+    	UserTableEntity userE = new UserTableEntity();
     	
     	// userid is the partition key, always going to send that
     	userE.setUserId(userid);
@@ -369,7 +373,7 @@ public class UserRestController {
   		// check if email address has changed
        	if (userData.getUserEmail() != null) {
        		String newEmail = userData.getUserEmail();
-       		Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(newEmail);
+       		Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(newEmail);
        		
        		if (existingUser.isEmpty()) {
        			// new email is NOT found in DB
@@ -404,28 +408,28 @@ public class UserRestController {
            	userE.setLocale(userData.getLocale());       		
        	}
        	
-       	if (userData.getAddresses() != null ) {
-       		userE.setAddresses(mapAddressEntity(userData.getAddresses()));
-       	}
+       	//if (userData.getAddresses() != null ) {
+       	//	userE.setAddresses(mapAddressEntity(userData.getAddresses()));
+       	//}
 
        	if (emailChanged) {
        		// get old email
-       		Optional<UserEntity> oldEmailEntry = userRepo.findById(userid);
+       		Optional<UserTableEntity> oldEmailEntry = dataApiServices.getUserById(userid);
        		String oldEmail = oldEmailEntry.get().getUserEmail();
 		    if(!oldEmail.equals(userData.getUserEmail())) {
 				// user_by_email save
-				UserByEmailEntity userByEmailE = new UserByEmailEntity();
+				UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
 				userByEmailE.setUserId(userid);
 				userByEmailE.setUserEmail(userData.getUserEmail());
-				userByEmailRepo.save(userByEmailE);
+				dataApiServices.saveUserByEmail(userByEmailE);
 				
 				// delete old email entry
-				userByEmailRepo.deleteById(oldEmail);
+				dataApiServices.deleteUserByEmail(oldEmail);
 			}
        	}
        	
     	// save to DB
-    	userRepo.save(userE);
+       	dataApiServices.saveUser(userE);
     	
     	// return user data
     	return ResponseEntity.ok(mapUser(userE));
@@ -475,7 +479,7 @@ public class UserRestController {
     	String rawPassword = passwordData.getPassword();
     	
     	// query user data
-    	Optional<UserEntity> returnVal = userRepo.findById(userid);
+    	Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
     	
     	if (returnVal.isPresent()) {
         	String hashedPassword = returnVal.get().getPassword();
@@ -550,20 +554,20 @@ public class UserRestController {
     	String oldPassword = passwordData.getPassword();
     	
     	// query user to verify that the old password matched what we have stored.
-    	Optional<UserEntity> returnVal = userRepo.findById(userid);
+    	Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
     	
     	if (returnVal.isPresent()) {
 	    	if (pEncoder.matches(oldPassword, returnVal.get().getPassword())) {
 	    		// Match!  set new password
 		    	String newHashedPassword = pEncoder.encode(passwordData.getNewPassword()); 
 		    	
-		    	UserEntity userE = returnVal.get();
+		    	UserTableEntity userE = returnVal.get();
 		    	
 		    	userE.setPassword(newHashedPassword);
 		    	userE.setPasswordTimestamp(new Date());    	
 		        	
 		    	// save to DB
-		    	userRepo.save(userE);
+		    	dataApiServices.saveUser(userE);
 		    	
 		    	// return user data
 		    	return ResponseEntity.ok(mapUser(returnVal.get()));
@@ -585,7 +589,7 @@ public class UserRestController {
      * @return
      *      rest bean
      */
-    private User mapUser(UserEntity ue) {
+    private User mapUser(UserTableEntity ue) {
         User u = new User();
 
         u.setUserId(ue.getUserId());
@@ -600,9 +604,9 @@ public class UserRestController {
         u.setPasswordTimestamp(ue.getPasswordTimestamp());
         u.setSessionId(ue.getSessionId());
 
-        if (ue.getAddresses() != null) {
-            u.setAddresses(mapAddress(ue.getAddresses()));
-        }
+        //if (ue.getAddresses() != null) {
+        //    u.setAddresses(mapAddress(ue.getAddresses()));
+        //}
         
         return u;
     }
