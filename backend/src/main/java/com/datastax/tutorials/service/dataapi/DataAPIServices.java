@@ -21,7 +21,6 @@ import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity
 import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
 import com.datastax.tutorials.service.product.Product;
-import com.datastax.tutorials.service.user.User;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
@@ -76,9 +75,9 @@ public class DataAPIServices {
     @Qualifier("table.user")
     Table<UserTableEntity> userRepository;
 
-    @Autowired
-    @Qualifier("table.user_by_email")
-    Table<UserByEmailTableEntity> userByEmailRepository;
+//    @Autowired
+//    @Qualifier("table.user_by_email")
+//    Table<UserByEmailTableEntity> userByEmailRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -237,15 +236,15 @@ public class DataAPIServices {
 		return categoryRepository.find(filter).toList();
 	}
 	
-	public Optional<UserByEmailTableEntity> getUserByEmail(String email) {
-		Filter filter  = new Filter(Map.of("user_email", email));
-		
-		return userByEmailRepository.findOne(filter);
-	}
+//	public Optional<UserByEmailTableEntity> getUserByEmail(String email) {
+//		Filter filter  = new Filter(Map.of("user_email", email));
+//		
+//		return userByEmailRepository.findOne(filter);
+//	}
 	
-	public void saveUserByEmail(UserByEmailTableEntity user) {
-		userByEmailRepository.insertOne(user);
-	}
+//	public void saveUserByEmail(UserByEmailTableEntity user) {
+//		userByEmailRepository.insertOne(user);
+//	}
 	
 	public void saveUser(UserTableEntity user) {
 		userRepository.insertOne(user);
@@ -259,9 +258,17 @@ public class DataAPIServices {
 		return userRepository.findOne(filter, options);
 	}
 	
-	public void deleteUserByEmail(String email) {
+	public Optional<UserTableEntity> getUserByEmail(String email) {
 		Filter filter  = new Filter(Map.of("user_email", email));
-		
-		userByEmailRepository.deleteOne(filter);
+		Projection projection = new Projection("addresses",false);
+		TableFindOneOptions options = new TableFindOneOptions()
+				.projection(projection);		
+		return userRepository.findOne(filter,options);
 	}
+	
+//	public void deleteUserByEmail(String email) {
+//		Filter filter  = new Filter(Map.of("user_email", email));
+//		
+//		userByEmailRepository.deleteOne(filter);
+//	}
 }

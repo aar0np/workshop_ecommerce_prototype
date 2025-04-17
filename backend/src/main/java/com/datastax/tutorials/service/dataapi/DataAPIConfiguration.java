@@ -10,13 +10,13 @@ import com.datastax.astra.client.tables.definition.TableDefinition;
 import com.datastax.astra.client.tables.definition.columns.ColumnDefinitionVector;
 import com.datastax.astra.client.tables.definition.indexes.TableVectorIndexDefinition;
 import com.datastax.astra.client.tables.definition.rows.Row;
+
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
-import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
 
 import org.slf4j.Logger;
@@ -154,13 +154,13 @@ public class DataAPIConfiguration {
 		}
     }
     
-    @Bean("table.user_by_email")
-    public Table<UserByEmailTableEntity> tableUserByEmail(Database db) {
-		if (db.tableExists("user_by_email")) {
-			return db.getTable(UserByEmailTableEntity.class);
-		} else {
-			logger.info("Table 'user_by_email' does not exist, creating it ...");
-			return db.createTable(UserByEmailTableEntity.class);
-		}
-    }
+//    @Bean("table.user_by_email")
+//    public Table<UserByEmailTableEntity> tableUserByEmail(Database db) {
+//		if (db.tableExists("user_by_email")) {
+//			return db.getTable(UserByEmailTableEntity.class);
+//		} else {
+//			logger.info("Table 'user_by_email' does not exist, creating it ...");
+//			return db.createTable(UserByEmailTableEntity.class);
+//		}
+//    }
 }

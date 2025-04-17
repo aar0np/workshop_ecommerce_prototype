@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datastax.tutorials.service.dataapi.DataAPIServices;
-import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,7 +107,7 @@ public class UserRestController {
     	//check if this is a returning user
     	// Both Google and GitHub have an "email" attribute
     	String email = principal.getAttribute("email");
-    	Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(email);
+    	Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(email);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
@@ -126,29 +125,29 @@ public class UserRestController {
     			user.setFirstName(principal.getAttribute("given_name"));
     		}
     		
-           	if (email != null) {
-           		UserByEmailTableEntity userByE = new UserByEmailTableEntity();
-           		userByE.setUserEmail(email);
-           		userByE.setUserId(userId);
-           		dataApiServices.saveUserByEmail(userByE);
-           	}
+//           	if (email != null) {
+//           		UserByEmailTableEntity userByE = new UserByEmailTableEntity();
+//           		userByE.setUserEmail(email);
+//           		userByE.setUserId(userId);
+//           		dataApiServices.saveUserByEmail(userByE);
+//           	}
            	
            	dataApiServices.saveUser(user);
            	
     	} else {
 	    	// existing user found!
-	    	userId = existingUser.get().getUserId();
-	        Optional<UserTableEntity> userO = dataApiServices.getUserById(userId);
+	    	//userId = existingUser.get().getUserId();
+	        //Optional<UserTableEntity> userO = dataApiServices.getUserById(userId);
 	        
-	        if (!userO.isPresent()) {
+	        //if (!userO.isPresent()) {
 	        	// catch-all, if for whatever reason a valid userId can't yield an existing user
-	            return ResponseEntity.notFound().build();
+	        //   return ResponseEntity.notFound().build();
 	        	
-	        } else {
+	        //} else {
 	        	// if it exists (it should) then invoke Optional's getter to convert from
 	        	// Optional to User bean.
-	        	user = userO.get();
-	        }
+	        	user = existingUser.get();
+	        //}
     	}
 
         return ResponseEntity.ok(mapUser(user));
@@ -218,20 +217,12 @@ public class UserRestController {
             @Parameter(name = "email", description = "email address", example = "bob.slydell@bobsconsulting.com")
             String email) {
 
-    	Optional<UserByEmailTableEntity> userByEmail = dataApiServices.getUserByEmail(email);
-    	
-    	if (userByEmail.isPresent()) {
-    		// now pull the user data 
-	        Optional<UserTableEntity> user = dataApiServices.getUserById(userByEmail.get().getUserId());
-	        
-	        if (!user.isPresent()) {
-	        	// extra bullet proofing, just in case user is null (for whatever reason)
-	            return ResponseEntity.notFound().build();
-	        }
-	        
+		// pull the user data 
+        Optional<UserTableEntity> user = dataApiServices.getUserByEmail(email);
+        
+        if (user.isPresent()) {
 	        return ResponseEntity.ok(mapUser(user.get()));
     	} else {
-    		
     		return ResponseEntity.notFound().build();
     	}
     }
@@ -273,7 +264,7 @@ public class UserRestController {
     	String userSessionId = userData.getSessionId();
     	
     	//check if this is a returning user
-    	Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(userEmail);
+    	Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(userEmail);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
@@ -309,20 +300,20 @@ public class UserRestController {
 	       	//}
 	       	
 	       	// user_by_email save
-	    	UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
-	    	userByEmailE.setUserId(userid);
-	    	userByEmailE.setUserEmail(userEmail);
+	    	//UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
+	    	//userByEmailE.setUserId(userid);
+	    	//userByEmailE.setUserEmail(userEmail);
 	        	
 	    	// save to DB
 	    	dataApiServices.saveUser(userE);
-	    	dataApiServices.saveUserByEmail(userByEmailE);
+	    	//dataApiServices.saveUserByEmail(userByEmailE);
 	    	
 	    	// return user data
 	    	return ResponseEntity.ok(mapUser(userE));
     	} else {
-    		Optional<UserTableEntity> userE = dataApiServices.getUserById(existingUser.get().getUserId());
+    		//Optional<UserTableEntity> userE = dataApiServices.getUserById(existingUser.get().getUserId());
     		
-    		return ResponseEntity.ok(mapUser(userE.get()));
+    		return ResponseEntity.ok(mapUser(existingUser.get()));
     	}
     }
 
@@ -359,7 +350,7 @@ public class UserRestController {
                        example = "5929e846-53e8-473e-8525-80b666c46a83")
             UUID userid) {
     	
-    	boolean emailChanged = false;
+    	//boolean emailChanged = false;
 
     	// user save
     	UserTableEntity userE = new UserTableEntity();
@@ -373,11 +364,11 @@ public class UserRestController {
   		// check if email address has changed
        	if (userData.getUserEmail() != null) {
        		String newEmail = userData.getUserEmail();
-       		Optional<UserByEmailTableEntity> existingUser = dataApiServices.getUserByEmail(newEmail);
+       		Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(newEmail);
        		
        		if (existingUser.isEmpty()) {
        			// new email is NOT found in DB
-       			emailChanged = true;
+       			//emailChanged = true;
        			userE.setUserEmail(newEmail);
        		} else {
        			// email from web form WAS FOUND in DB
@@ -412,21 +403,21 @@ public class UserRestController {
        	//	userE.setAddresses(mapAddressEntity(userData.getAddresses()));
        	//}
 
-       	if (emailChanged) {
+       	//if (emailChanged) {
        		// get old email
-       		Optional<UserTableEntity> oldEmailEntry = dataApiServices.getUserById(userid);
-       		String oldEmail = oldEmailEntry.get().getUserEmail();
-		    if(!oldEmail.equals(userData.getUserEmail())) {
+       	//	Optional<UserTableEntity> oldEmailEntry = dataApiServices.getUserById(userid);
+       		//String oldEmail = oldEmailEntry.get().getUserEmail();
+		    //if(!oldEmail.equals(userData.getUserEmail())) {
 				// user_by_email save
-				UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
-				userByEmailE.setUserId(userid);
-				userByEmailE.setUserEmail(userData.getUserEmail());
-				dataApiServices.saveUserByEmail(userByEmailE);
+				//UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
+				//userByEmailE.setUserId(userid);
+				//userByEmailE.setUserEmail(userData.getUserEmail());
+				//dataApiServices.saveUserByEmail(userByEmailE);
 				
 				// delete old email entry
-				dataApiServices.deleteUserByEmail(oldEmail);
-			}
-       	}
+//				dataApiServices.deleteUserByEmail(oldEmail);
+			//}
+       	//}
        	
     	// save to DB
        	dataApiServices.saveUser(userE);
