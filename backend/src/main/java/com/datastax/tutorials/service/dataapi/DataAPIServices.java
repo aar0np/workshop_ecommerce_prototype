@@ -10,7 +10,7 @@ import com.datastax.astra.client.databases.Database;
 import com.datastax.astra.client.tables.Table;
 import com.datastax.astra.client.tables.commands.options.TableFindOneOptions;
 import com.datastax.astra.client.tables.commands.options.TableFindOptions;
-import com.datastax.astra.client.tables.cursor.TableCursor;
+import com.datastax.astra.client.tables.cursor.TableFindCursor;
 import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
@@ -18,7 +18,6 @@ import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
-import com.datastax.tutorials.service.dataapi.entities.UserByEmailTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.UserTableEntity;
 import com.datastax.tutorials.service.product.Product;
 
@@ -168,10 +167,12 @@ public class DataAPIServices {
     
 	public List<FeaturedTableEntity> getFeaturedProductsById(int featuredId) {
 		
-		Sort sort = new Sort("price", SortOrder.DESCENDING, null, null);
+		//Sort sort = new Sort("price", SortOrder.DESCENDING);
+		Sort sort = Sort.descending("price");
+		
 		TableFindOptions options = new TableFindOptions().sort(sort);
 		
-		TableCursor<FeaturedTableEntity, FeaturedTableEntity> results =
+		TableFindCursor<FeaturedTableEntity, FeaturedTableEntity> results =
 				featuredProductRepository.find(Filters.eq("feature_id", featuredId), options);
 				
 		return results.toList();
@@ -181,10 +182,11 @@ public class DataAPIServices {
 		
 		List<PriceTableEntity> returnVal = new ArrayList<>();
 		
-		Sort sort = new Sort("value", SortOrder.DESCENDING, null, null);
+		//Sort sort = new Sort("value", SortOrder.DESCENDING, null, null);
+		Sort sort = Sort.descending("value");
 		TableFindOptions options = new TableFindOptions().sort(sort);
 		
-		TableCursor<PriceTableEntity, PriceTableEntity> results =
+		TableFindCursor<PriceTableEntity, PriceTableEntity> results =
 				priceRepository.find(Filters.eq("product_id", productId), options);
 		
 		for (PriceTableEntity entity : results) {
@@ -203,7 +205,7 @@ public class DataAPIServices {
 	public List<CartProductTableEntity> getCartProductByCartId(UUID cartId) {
 		Filter filter  = new Filter(Map.of("cart_id", cartId));
 		
-		TableCursor<CartProductTableEntity, CartProductTableEntity> results =
+		TableFindCursor<CartProductTableEntity, CartProductTableEntity> results =
 				cartProductRepository.find(filter);
 		List<CartProductTableEntity> returnVal = new ArrayList<>();
 		

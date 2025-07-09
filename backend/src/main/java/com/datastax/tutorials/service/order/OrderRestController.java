@@ -72,8 +72,8 @@ public class OrderRestController {
 	private UserCartsRepository userCartRepo;
 	private CartProductsRepository cartProductsRepo;
 	
-	//private PulsarClient client;
-	//private Producer<byte[]> orderProducer;
+	private PulsarClient client;
+	private Producer<byte[]> orderProducer;
 	
 	// assuming standard shipping and handling of $4.00 US
 	private static final BigDecimal SHIPPING_HANDLING = new BigDecimal(4.00);
@@ -110,34 +110,34 @@ public class OrderRestController {
 		String STREAMING_PREFIX = STREAMING_TENANT + "/default/";
 		String PENDING_ORDER_TOPIC = "persistent://" + STREAMING_PREFIX + "pending-orders";
 
-		//try {
+		try {
 			if (YOUR_PULSAR_TOKEN == null) {
 				// run without auth ... local Pulsar
 		//		client = PulsarClient.builder()
 		//		        .serviceUrl(SERVICE_URL)
 		//		        .build();
 			} else {
-		//		client = PulsarClient.builder()
-		//		        .serviceUrl(SERVICE_URL)
-		//		        .authentication(
-		//		            AuthenticationFactory.token(YOUR_PULSAR_TOKEN)
-		//		        )
-		//		        .build();
+				client = PulsarClient.builder()
+				        .serviceUrl(SERVICE_URL)
+				        .authentication(
+				            AuthenticationFactory.token(YOUR_PULSAR_TOKEN)
+				        )
+				        .build();
 			}
-		//} catch (PulsarClientException e) {
+		} catch (PulsarClientException e) {
 			// issue building the client stream connection
-		//	e.printStackTrace();
-		//}
+			e.printStackTrace();
+		}
 
         // Create producer on a topic
-        //try {
-		//	orderProducer = client.newProducer()
-		//	        .topic(PENDING_ORDER_TOPIC)
-		//	        .create();
-		//} catch (PulsarClientException e) {
+        try {
+			orderProducer = client.newProducer()
+			        .topic(PENDING_ORDER_TOPIC)
+			        .create();
+		} catch (PulsarClientException e) {
 			// issue creating the streaming message producer
-		//	e.printStackTrace();
-		//}
+			e.printStackTrace();
+		}
 	}
 
     /**
@@ -565,7 +565,7 @@ public class OrderRestController {
     
     private void sendToOrderStream(String message) throws Exception {
         // Send a message to the topic
-        //orderProducer.send(message.getBytes());
+        orderProducer.send(message.getBytes());
     }
  
     private List<OrderByUser> mapOrderByUser(List<OrderByUserEntity> entityList) {

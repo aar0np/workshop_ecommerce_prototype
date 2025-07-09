@@ -7,6 +7,7 @@ import com.datastax.astra.client.tables.mapping.Column;
 import com.datastax.astra.client.tables.mapping.EntityTable;
 import com.datastax.astra.client.tables.mapping.PartitionBy;
 import com.datastax.tutorials.service.product.Product;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Set;
@@ -28,7 +29,7 @@ public class ProductVectorsTableEntity {
 	@Column(name="product_group", type = ColumnTypes.TEXT)
 	private	String group;
 
-	@Column(name="product_vector", type = ColumnTypes.VECTOR, dimension = 384, metric = SimilarityMetric.COSINE)
+	@Column(name="product_vector", type = ColumnTypes.VECTOR)
 	private DataAPIVector productVector;
 
 	@Column(name="parent_id", type = ColumnTypes.UUID)

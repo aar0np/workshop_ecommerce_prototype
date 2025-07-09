@@ -27,7 +27,7 @@ public class UserTableEntity {
 	@Column(name = "last_name")
 	private String lastName;
 	private String locale;
-	//private List<AddressEntity> addresses;
+	private List<AddressEntity> addresses;
 	
 	@Column(name = "session_id")
 	private String sessionId;
@@ -84,13 +84,13 @@ public class UserTableEntity {
 		this.locale = locale;
 	}
 
-	//public List<AddressEntity> getAddresses() {
-	//	return addresses;
-	//}
+	public List<AddressEntity> getAddresses() {
+		return addresses;
+	}
 
-	//public void setAddresses(List<AddressEntity> addresses) {
-	//	this.addresses = addresses;
-	//}
+	public void setAddresses(List<AddressEntity> addresses) {
+		this.addresses = addresses;
+	}
 
 	public String getSessionId() {
 		return sessionId;

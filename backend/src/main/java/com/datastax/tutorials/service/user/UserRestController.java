@@ -58,9 +58,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserRestController {
 	
     /** Inject the repositories. */
-    //private UserRepository userRepo;
-    //private UserByEmailRepository userByEmailRepo;
-	private DataAPIServices dataApiServices;
+    private UserRepository userRepo;
+    private UserByEmailRepository userByEmailRepo;
+	//private DataAPIServices dataApiServices;
 	
     /**
      * Injection through constructor.
@@ -68,10 +68,11 @@ public class UserRestController {
      * @param repo
      *      repository
      */
-    public UserRestController(DataAPIServices dataApiServices) {
-    	//userRepo = uRepo;
-    	//userByEmailRepo = ueRepo;
-    	this.dataApiServices = dataApiServices;
+    public UserRestController(UserRepository uRepo, UserByEmailRepository ueRepo) {
+    //public UserRestController(DataAPIServices dataApiServices) {
+    	userRepo = uRepo;
+    	userByEmailRepo = ueRepo;
+    	//this.dataApiServices = dataApiServices;
     }
     
     @GetMapping("/user")
@@ -102,16 +103,19 @@ public class UserRestController {
     	//Called by GitHub or Google login APIs
     	
     	UUID userId = null;
-    	UserTableEntity user = null;
+    	//UserTableEntity user = null;
+    	UserEntity user = null;
     	
     	//check if this is a returning user
     	// Both Google and GitHub have an "email" attribute
     	String email = principal.getAttribute("email");
-    	Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(email);
+    	//Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(email);
+    	Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(email);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
-    		user = new UserTableEntity();
+    		//user = new UserTableEntity();
+    		user = new UserEntity();
     		// need a userId, but we also need a way to get/transfer the one from the website
     		userId = UUID.randomUUID();
     		user.setUserId(userId);
@@ -132,22 +136,24 @@ public class UserRestController {
 //           		dataApiServices.saveUserByEmail(userByE);
 //           	}
            	
-           	dataApiServices.saveUser(user);
+           	//dataApiServices.saveUser(user);
+    		userRepo.save(user);
            	
     	} else {
 	    	// existing user found!
-	    	//userId = existingUser.get().getUserId();
+	    	userId = existingUser.get().getUserId();
 	        //Optional<UserTableEntity> userO = dataApiServices.getUserById(userId);
+	    	Optional<UserEntity> userO = userRepo.findById(userId);
 	        
-	        //if (!userO.isPresent()) {
+	        if (!userO.isPresent()) {
 	        	// catch-all, if for whatever reason a valid userId can't yield an existing user
-	        //   return ResponseEntity.notFound().build();
+	           return ResponseEntity.notFound().build();
 	        	
-	        //} else {
+	        } else {
 	        	// if it exists (it should) then invoke Optional's getter to convert from
 	        	// Optional to User bean.
-	        	user = existingUser.get();
-	        //}
+	        	user = userO.get();
+	        }
     	}
 
         return ResponseEntity.ok(mapUser(user));
@@ -181,7 +187,7 @@ public class UserRestController {
             @Parameter(name = "userid", description = "user identifier (UUID)", example = "5929e846-53e8-473e-8525-80b666c46a83")
             UUID userid) {
 
-        Optional<UserTableEntity> user = dataApiServices.getUserById(userid);
+    	Optional<UserEntity> user = userRepo.findById(userid);
         
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -218,9 +224,19 @@ public class UserRestController {
             String email) {
 
 		// pull the user data 
-        Optional<UserTableEntity> user = dataApiServices.getUserByEmail(email);
+        //Optional<UserTableEntity> user = dataApiServices.getUserByEmail(email);
+    	Optional<UserByEmailEntity> userByEmail = userByEmailRepo.findById(email);
         
-        if (user.isPresent()) {
+        if (userByEmail.isPresent()) {
+        	// now pull user data by userId
+        	
+	        Optional<UserEntity> user = userRepo.findById(userByEmail.get().getUserId());
+	        
+	        if (!user.isPresent()) {
+	        	// extra bullet proofing, just in case user is null (for whatever reason)
+	            return ResponseEntity.notFound().build();
+	        }
+	        
 	        return ResponseEntity.ok(mapUser(user.get()));
     	} else {
     		return ResponseEntity.notFound().build();
@@ -264,7 +280,8 @@ public class UserRestController {
     	String userSessionId = userData.getSessionId();
     	
     	//check if this is a returning user
-    	Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(userEmail);
+    	//Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(userEmail);
+    	Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(userEmail);
     	
     	if (!existingUser.isPresent()) {
     		// If not, create new!
@@ -274,7 +291,8 @@ public class UserRestController {
 	    	String hashedPassword = pEncoder.encode(userData.getPassword());
 	    	
 	    	// user save
-	    	UserTableEntity userE = new UserTableEntity();
+	    	//UserTableEntity userE = new UserTableEntity();
+	    	UserEntity userE = new UserEntity();
 	    	//Required User properties
 	    	userE.setUserId(userid);
 	    	userE.setPassword(hashedPassword);
@@ -295,25 +313,29 @@ public class UserRestController {
 	           	userE.setLocale(userData.getLocale());       		
 	       	}
 	       	
-	       	//if (userData.getAddresses() != null ) {
-	       	//	userE.setAddresses(mapAddressEntity(userData.getAddresses()));
-	       	//}
+	       	if (userData.getAddresses() != null ) {
+	       		userE.setAddresses(mapAddressEntity(userData.getAddresses()));
+	       	}
 	       	
 	       	// user_by_email save
 	    	//UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
-	    	//userByEmailE.setUserId(userid);
-	    	//userByEmailE.setUserEmail(userEmail);
+	       	UserByEmailEntity userByEmailE = new UserByEmailEntity();
+	    	userByEmailE.setUserId(userid);
+	    	userByEmailE.setUserEmail(userEmail);
 	        	
 	    	// save to DB
-	    	dataApiServices.saveUser(userE);
+	    	//dataApiServices.saveUser(userE);
 	    	//dataApiServices.saveUserByEmail(userByEmailE);
+	    	userRepo.save(userE);
+	    	userByEmailRepo.save(userByEmailE);
 	    	
 	    	// return user data
 	    	return ResponseEntity.ok(mapUser(userE));
     	} else {
     		//Optional<UserTableEntity> userE = dataApiServices.getUserById(existingUser.get().getUserId());
+    		Optional<UserEntity> userE = userRepo.findById(existingUser.get().getUserId());
     		
-    		return ResponseEntity.ok(mapUser(existingUser.get()));
+    		return ResponseEntity.ok(mapUser(userE.get()));
     	}
     }
 
@@ -350,10 +372,11 @@ public class UserRestController {
                        example = "5929e846-53e8-473e-8525-80b666c46a83")
             UUID userid) {
     	
-    	//boolean emailChanged = false;
+    	boolean emailChanged = false;
 
     	// user save
-    	UserTableEntity userE = new UserTableEntity();
+    	//UserTableEntity userE = new UserTableEntity();
+    	UserEntity userE = new UserEntity();
     	
     	// userid is the partition key, always going to send that
     	userE.setUserId(userid);
@@ -364,11 +387,12 @@ public class UserRestController {
   		// check if email address has changed
        	if (userData.getUserEmail() != null) {
        		String newEmail = userData.getUserEmail();
-       		Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(newEmail);
+       		//Optional<UserTableEntity> existingUser = dataApiServices.getUserByEmail(newEmail);
+       		Optional<UserByEmailEntity> existingUser = userByEmailRepo.findById(newEmail);
        		
        		if (existingUser.isEmpty()) {
        			// new email is NOT found in DB
-       			//emailChanged = true;
+       			emailChanged = true;
        			userE.setUserEmail(newEmail);
        		} else {
        			// email from web form WAS FOUND in DB
@@ -399,28 +423,32 @@ public class UserRestController {
            	userE.setLocale(userData.getLocale());       		
        	}
        	
-       	//if (userData.getAddresses() != null ) {
-       	//	userE.setAddresses(mapAddressEntity(userData.getAddresses()));
-       	//}
+       	if (userData.getAddresses() != null ) {
+       		userE.setAddresses(mapAddressEntity(userData.getAddresses()));
+       	}
 
-       	//if (emailChanged) {
+       	if (emailChanged) {
        		// get old email
-       	//	Optional<UserTableEntity> oldEmailEntry = dataApiServices.getUserById(userid);
-       		//String oldEmail = oldEmailEntry.get().getUserEmail();
-		    //if(!oldEmail.equals(userData.getUserEmail())) {
+       		//Optional<UserTableEntity> oldEmailEntry = dataApiServices.getUserById(userid);
+       		Optional<UserEntity> oldEmailEntry = userRepo.findById(userid);
+       		String oldEmail = oldEmailEntry.get().getUserEmail();
+		    if(!oldEmail.equals(userData.getUserEmail())) {
 				// user_by_email save
-				//UserByEmailTableEntity userByEmailE = new UserByEmailTableEntity();
-				//userByEmailE.setUserId(userid);
-				//userByEmailE.setUserEmail(userData.getUserEmail());
+				UserByEmailEntity userByEmailE = new UserByEmailEntity();
+				userByEmailE.setUserId(userid);
+				userByEmailE.setUserEmail(userData.getUserEmail());
 				//dataApiServices.saveUserByEmail(userByEmailE);
+				userByEmailRepo.save(userByEmailE);
 				
 				// delete old email entry
-//				dataApiServices.deleteUserByEmail(oldEmail);
-			//}
-       	//}
+				//dataApiServices.deleteUserByEmail(oldEmail);
+				userByEmailRepo.deleteById(oldEmail);
+			}
+       	}
        	
     	// save to DB
-       	dataApiServices.saveUser(userE);
+       	//dataApiServices.saveUser(userE);
+		userRepo.save(userE);
     	
     	// return user data
     	return ResponseEntity.ok(mapUser(userE));
@@ -470,7 +498,8 @@ public class UserRestController {
     	String rawPassword = passwordData.getPassword();
     	
     	// query user data
-    	Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
+    	//Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
+    	Optional<UserEntity> returnVal = userRepo.findById(userid);
     	
     	if (returnVal.isPresent()) {
         	String hashedPassword = returnVal.get().getPassword();
@@ -545,20 +574,23 @@ public class UserRestController {
     	String oldPassword = passwordData.getPassword();
     	
     	// query user to verify that the old password matched what we have stored.
-    	Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
+    	//Optional<UserTableEntity> returnVal = dataApiServices.getUserById(userid);
+    	Optional<UserEntity> returnVal = userRepo.findById(userid);
     	
     	if (returnVal.isPresent()) {
 	    	if (pEncoder.matches(oldPassword, returnVal.get().getPassword())) {
 	    		// Match!  set new password
 		    	String newHashedPassword = pEncoder.encode(passwordData.getNewPassword()); 
 		    	
-		    	UserTableEntity userE = returnVal.get();
+		    	//UserTableEntity userE = returnVal.get();
+		    	UserEntity userE = returnVal.get();
 		    	
 		    	userE.setPassword(newHashedPassword);
 		    	userE.setPasswordTimestamp(new Date());    	
 		        	
 		    	// save to DB
-		    	dataApiServices.saveUser(userE);
+		    	//dataApiServices.saveUser(userE);
+		    	userRepo.save(userE);
 		    	
 		    	// return user data
 		    	return ResponseEntity.ok(mapUser(returnVal.get()));
@@ -580,7 +612,8 @@ public class UserRestController {
      * @return
      *      rest bean
      */
-    private User mapUser(UserTableEntity ue) {
+    private User mapUser(UserEntity ue) {
+    //private User mapUser(UserTableEntity ue) {
         User u = new User();
 
         u.setUserId(ue.getUserId());
@@ -595,9 +628,9 @@ public class UserRestController {
         u.setPasswordTimestamp(ue.getPasswordTimestamp());
         u.setSessionId(ue.getSessionId());
 
-        //if (ue.getAddresses() != null) {
-        //    u.setAddresses(mapAddress(ue.getAddresses()));
-        //}
+        if (ue.getAddresses() != null) {
+            u.setAddresses(mapAddress(ue.getAddresses()));
+        }
         
         return u;
     }
