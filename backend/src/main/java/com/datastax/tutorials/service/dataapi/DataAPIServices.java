@@ -15,6 +15,8 @@ import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.OrderByUserTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.OrderTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
@@ -77,6 +79,14 @@ public class DataAPIServices {
 //    @Autowired
 //    @Qualifier("table.user_by_email")
 //    Table<UserByEmailTableEntity> userByEmailRepository;
+    
+    @Autowired
+    @Qualifier("table.order_by_user")
+    Table<OrderByUserTableEntity> orderByUserRepository;
+    
+    @Autowired
+    @Qualifier("table.order_by_id")
+    Table<OrderTableEntity> orderByIdRepository;
     
     EmbeddingModel embeddingModel;
 
@@ -153,12 +163,14 @@ public class DataAPIServices {
                 .limit(10)).toList();
     }
     
-    public List<ProductVectorsTableEntity> findProductsByVector(DataAPIVector vector) {
+    public List<ProductVectorsTableEntity> findProductsByVector(DataAPIVector vector, int limit) {
     	
-    	return productVectorRepository.find(null, new TableFindOptions()
+    	return productVectorRepository
+    			.find(null, new TableFindOptions()
 						.sort(Sort.vector("product_vector", vector))
 						.includeSimilarity(true)
-						.limit(8)).toList();
+						.limit(limit))
+    			.toList();
     }
     
     public Optional<ProductVectorsTableEntity> findProductVectorById(String productId) {
@@ -273,4 +285,23 @@ public class DataAPIServices {
 //		
 //		userByEmailRepository.deleteOne(filter);
 //	}
+	
+	public List<OrderByUserTableEntity> getOrdersByUser(UUID userId) {
+		Filter filter = new Filter(Map.of("user_id", userId));
+		Projection orderIdProjection = new Projection("order_id",false);
+		TableFindOptions options = new TableFindOptions()
+				.projection(orderIdProjection);
+		
+		return orderByUserRepository.find(filter, options).toList();
+	}
+	
+	public List<OrderTableEntity> getOrderById(UUID orderId) {
+		Filter filter = new Filter(Map.of("order_id", orderId));
+		Projection addressProjection = new Projection("addresses",false);
+		Projection orderIdProjection = new Projection("order_id",false);
+		TableFindOptions options = new TableFindOptions()
+				.projection(addressProjection, orderIdProjection);
+
+		return orderByIdRepository.find(filter, options).toList();
+	}
 }

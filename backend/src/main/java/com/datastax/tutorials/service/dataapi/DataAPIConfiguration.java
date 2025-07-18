@@ -14,6 +14,8 @@ import com.datastax.astra.client.tables.definition.rows.Row;
 import com.datastax.tutorials.service.dataapi.entities.CartProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.OrderByUserTableEntity;
+import com.datastax.tutorials.service.dataapi.entities.OrderTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.PriceTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductTableEntity;
 import com.datastax.tutorials.service.dataapi.entities.ProductVectorsTableEntity;
@@ -141,6 +143,26 @@ public class DataAPIConfiguration {
 		} else {
 			logger.info("Table 'category' does not exist, creating it ...");
 			return db.createTable(CategoryTableEntity.class);
+		}
+	}
+    
+    @Bean("table.order_by_id")
+    public Table<OrderTableEntity> tableOrderById(Database db) {
+    	if (db.tableExists("order_by_id")) {
+    		return db.getTable(OrderTableEntity.class);
+    	} else {
+    		logger.info("Table 'order_by_id' does not exist, creating it ...");
+    		return db.createTable(OrderTableEntity.class);
+    	}
+    }
+    
+    @Bean("table.order_by_user")
+    public Table<OrderByUserTableEntity> tableOrderByUser(Database db) {
+		if (db.tableExists("order_by_user")) {
+			return db.getTable(OrderByUserTableEntity.class);
+		} else {
+			logger.info("Table 'order_by_user' does not exist, creating it ...");
+			return db.createTable(OrderByUserTableEntity.class);
 		}
 	}
     
