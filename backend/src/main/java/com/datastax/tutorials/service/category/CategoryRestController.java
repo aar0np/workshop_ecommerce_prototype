@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.CategoryTableEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +51,8 @@ public class CategoryRestController {
     public static final String DEFAULT_STORE_ID = "web";
     
     /** Inject the repository. */
-    private CategoryRepository catRepo;
+    //private CategoryRepository catRepo;
+    private DataAPIServices dataAPIServices;
     
     /**
      * Injection through constructor.
@@ -56,8 +60,8 @@ public class CategoryRestController {
      * @param repo
      *      repository
      */
-    public CategoryRestController(CategoryRepository repo) {
-        this.catRepo = repo;
+    public CategoryRestController(DataAPIServices repo) {
+        this.dataAPIServices = repo;
     }
     
     /**
@@ -100,11 +104,11 @@ public class CategoryRestController {
             @Parameter(name = "parentid", description = "Parent identifier", example = "ffdac25a-0244-4894-bb31-a0884bc82aa9")
             UUID parentid) {
         // Get the partition (be careful unicity is here not ensured
-        List<CategoryEntity> e = catRepo.findByKeyParentId(parentid);
-        if (e.isEmpty()) {
+        List<CategoryTableEntity> categories = dataAPIServices.getCategoriesByParentId(parentid);
+        if (categories.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(e.stream().map(this::mapCategory));
+        return ResponseEntity.ok(categories.stream().map(this::mapCategory));
     }
             
     @GetMapping("/category/{parentid}/{categoryid}")
@@ -133,7 +137,7 @@ public class CategoryRestController {
             @PathVariable(value = "categoryid")
     		@Parameter(name = "categoryid", description = "Category identifier", example = "18105592-77aa-4469-8556-833b419dacf4")
     		UUID categoryId) {
-        List<CategoryEntity> categories = catRepo.findByKeyParentIdAndKeyCategoryId(parentId, categoryId);
+        List<CategoryTableEntity> categories = dataAPIServices.getCategoriesByParentIdAndCategoryId(parentId, categoryId);
         if (categories.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -151,10 +155,10 @@ public class CategoryRestController {
      * @return
      *      rest bean
      */
-    private Category mapCategory(CategoryEntity c) {
+    private Category mapCategory(CategoryTableEntity c) {
         Category ca = new Category();
-        ca.setParentId(c.getKey().getParentId());
-        ca.setCategoryId(c.getKey().getCategoryId());
+        ca.setParentId(c.getParentId());
+        ca.setCategoryId(c.getCategoryId());
         ca.setName(c.getName());
         ca.setImage(c.getImage());
         ca.setProducts(c.getProducts());

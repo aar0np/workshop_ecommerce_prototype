@@ -21,7 +21,9 @@ spring:
 
 astra:
   api:
-    application-token: ${ASTRA_DB_APP_TOKEN}
+    application-token: ${ASTRA_DB_APPLICATION_TOKEN}
+    database-endpoint: ${DB_API_ENDPOINT}
+    # not mandatory for data API
     database-id: ${ASTRA_DB_ID}
     database-region: ${ASTRA_DB_REGION}
     cross-region-failback: false
@@ -31,7 +33,7 @@ astra:
       enabled: true
     driver-config:
       basic:
-        session-keyspace: ecommerce
+        session-keyspace: ${ASTRA_DB_KEYSPACE}
         request:
           timeout: 8s
           consistency: LOCAL_QUORUM

@@ -8,7 +8,7 @@ export const navigation = {
           name: "Featured Products",
           href: "/",
           imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg",
+            "/images/mega-menu-category-02.jpg",
           imageAlt:
             "Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.",
         },

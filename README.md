@@ -1,4 +1,3 @@
-<!--- STARTEXCLUDE --->
 ## 🔥 Building an E-commerce Website 🔥
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-ecommerce-app)

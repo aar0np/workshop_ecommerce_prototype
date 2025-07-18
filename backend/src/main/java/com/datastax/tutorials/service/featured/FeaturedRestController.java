@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.datastax.tutorials.service.dataapi.DataAPIServices;
+import com.datastax.tutorials.service.dataapi.entities.FeaturedTableEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,16 +47,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Featured Service", description="Provide crud operations for Featured Products")
 public class FeaturedRestController {
     /** Inject the repository. */
-    private FeaturedRepository featuredRepo;
-
+	private DataAPIServices dataApiServices;
     /**
      * Injection through constructor.
      *  
      * @param repo
      *      repository
      */
-    public FeaturedRestController(FeaturedRepository repo) {
-        this.featuredRepo = repo;
+    public FeaturedRestController(DataAPIServices dataApiServices) {
+    	this.dataApiServices = dataApiServices;
     }
 
     /**
@@ -95,11 +97,13 @@ public class FeaturedRestController {
             @PathVariable(value = "featureid")
             @Parameter(name = "featureid", description = "Featured products identifier", example = "202112")
             int featureId) {
-        // Get the partition (be careful unicity is here not ensured
-        List<FeaturedEntity> e = featuredRepo.findByKeyFeatureId(featureId);
+
+    	List<FeaturedTableEntity> e = dataApiServices.getFeaturedProductsById(featureId);
+
         if (e.isEmpty()) {
             return ResponseEntity.notFound().build();
-        }
+        } 
+        
         return ResponseEntity.ok(e.stream().map(this::mapFeatured));
     }
     
@@ -111,10 +115,10 @@ public class FeaturedRestController {
      * @return
      *      rest bean
      */
-    private Featured mapFeatured(FeaturedEntity f) {
+    private Featured mapFeatured(FeaturedTableEntity f) {
     	Featured fe = new Featured();
-    	fe.setFeatureId(f.getKey().getFeatureId());
-    	fe.setCategoryId(f.getKey().getCategoryId());
+    	fe.setFeatureId(f.getFeatureId());
+    	fe.setCategoryId(f.getCategoryId());
     	fe.setName(f.getName());
     	fe.setImage(f.getImage());
     	fe.setParentId(f.getParentId());

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.datastax.tutorials.service.user.Address;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
